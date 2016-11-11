@@ -150,8 +150,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout8"
-        android:layout_above="@+id/adView">
+        android:layout_below="@+id/linearLayout8">
 
         <LinearLayout
             android:orientation="vertical"

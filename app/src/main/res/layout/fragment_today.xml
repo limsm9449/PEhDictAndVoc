@@ -61,8 +61,7 @@
             android:id="@+id/my_f_today_lv_dictionary"
             android:divider="@color/my_divider"
             android:dividerHeight="0.5dp"
-            android:layout_below="@+id/my_f_today_ll1"
-            android:layout_above="@+id/adView" />
+            android:layout_below="@+id/my_f_today_ll1"/>
 
     </RelativeLayout>
 

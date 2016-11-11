@@ -15,7 +15,6 @@
         android:divider="@color/my_divider"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:dividerHeight="0.5dp"
-        android:layout_above="@+id/adView" />
+        android:dividerHeight="0.5dp" />
 
 </RelativeLayout>

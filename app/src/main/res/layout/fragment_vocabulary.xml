@@ -73,7 +73,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="false"
-            android:layout_above="@+id/adView"
             android:id="@+id/my_f_voc_ll_content"
             android:layout_below="@+id/my_f_voc_ll_btn">
 

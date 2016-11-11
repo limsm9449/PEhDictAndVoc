@@ -14,7 +14,6 @@
         android:id="@+id/my_c_g_lv1"
         android:divider="@color/my_divider"
         android:dividerHeight="0.5dp"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/adView" />
+        android:layout_alignParentTop="true"/>
 
 </RelativeLayout>
