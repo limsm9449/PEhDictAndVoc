@@ -390,15 +390,17 @@ class VocabularyCursorAdapter extends CursorAdapter {
         isCheck = new boolean[mCursor.getCount()];
         entryId = new String[mCursor.getCount()];
 
-        mCursor.moveToFirst();
-        isCheck[mCursor.getPosition()] = false;
-        entryId[mCursor.getPosition()] = mCursor.getString(mCursor.getColumnIndexOrThrow("ENTRY_ID"));
-        while ( mCursor.moveToNext() ) {
+        if( mCursor.getCount() > 0 ) {
+            mCursor.moveToFirst();
             isCheck[mCursor.getPosition()] = false;
             entryId[mCursor.getPosition()] = mCursor.getString(mCursor.getColumnIndexOrThrow("ENTRY_ID"));
-        }
+            while (mCursor.moveToNext()) {
+                isCheck[mCursor.getPosition()] = false;
+                entryId[mCursor.getPosition()] = mCursor.getString(mCursor.getColumnIndexOrThrow("ENTRY_ID"));
+            }
 
-        mCursor.move(mCursor.getPosition());
+            mCursor.move(mCursor.getPosition());
+        }
 
         //변경사항을 반영한다.
         notifyDataSetChanged();
