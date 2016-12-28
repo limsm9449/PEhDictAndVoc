@@ -50,6 +50,7 @@ public class DicCategoryActivity extends AppCompatActivity {
     private String dicGroup = "";
     private String vocName = "";
     private String kind = "";
+    private int mSelect = 0;
 
     DicCategoryTask task;
 
@@ -145,54 +146,95 @@ public class DicCategoryActivity extends AppCompatActivity {
 
                 if ("W".equals(kind.substring(0, 1))) {
                     //layout 구성
-                    final View dialog_layout = getLayoutInflater().inflate(R.layout.dialog_dic_category, null);
+                    //메뉴 선택 다이얼로그 생성
+                    Cursor cursor = db.rawQuery(DicQuery.getVocabularyKindContextMenu(), null);
+                    final String[] kindCodes = new String[cursor.getCount()];
+                    final String[] kindCodeNames = new String[cursor.getCount()];
 
-                    //dialog 생성..
-                    AlertDialog.Builder builder = new AlertDialog.Builder(DicCategoryActivity.this);
-                    builder.setView(dialog_layout);
-                    final AlertDialog alertDialog = builder.create();
+                    int idx = 0;
+                    while (cursor.moveToNext()) {
+                        kindCodes[idx] = cursor.getString(cursor.getColumnIndexOrThrow("KIND"));
+                        kindCodeNames[idx] = cursor.getString(cursor.getColumnIndexOrThrow("KIND_NAME"));
+                        idx++;
+                    }
+                    cursor.close();
 
-                    final EditText et_voc_name = ((EditText) dialog_layout.findViewById(R.id.my_dc_et_voc_name));
-                    et_voc_name.setText(cur.getString(cur.getColumnIndexOrThrow("KIND_NAME")));
-
-                    ((Button) dialog_layout.findViewById(R.id.my_dc_b_save)).setOnClickListener(new View.OnClickListener() {
+                    final android.support.v7.app.AlertDialog.Builder dlg = new android.support.v7.app.AlertDialog.Builder(DicCategoryActivity.this);
+                    dlg.setTitle("단어장 선택");
+                    dlg.setSingleChoiceItems(kindCodeNames, mSelect, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            if ("".equals(et_voc_name.getText().toString())) {
-                                Toast.makeText(DicCategoryActivity.this, "단어장 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                alertDialog.dismiss();
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            mSelect = arg1;
+                        }
+                    });
+                    dlg.setNeutralButton("신규 단어장", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final View dialog_layout = getLayoutInflater().inflate(R.layout.dialog_dic_category, null);
 
-                                vocName = et_voc_name.getText().toString();
+                            //dialog 생성..
+                            AlertDialog.Builder builder = new AlertDialog.Builder(DicCategoryActivity.this);
+                            builder.setView(dialog_layout);
+                            final AlertDialog alertDialog = builder.create();
 
-                                String insCategoryCode = DicQuery.getInsCategoryCode(db);
-                                db.execSQL(DicQuery.getInsNewCategory("MY", insCategoryCode, vocName));
+                            final EditText et_voc_name = ((EditText) dialog_layout.findViewById(R.id.my_dc_et_voc_name));
+                            et_voc_name.setText(cur.getString(cur.getColumnIndexOrThrow("KIND_NAME")));
 
-                                Cursor wordCursor = db.rawQuery(DicQuery.getCategoryWord(kind), null);
-                                while ( wordCursor.moveToNext() ) {
-                                    String entryId = wordCursor.getString(wordCursor.getColumnIndexOrThrow("ENTRY_ID"));
-                                    DicDb.insDicVoc(db, entryId, insCategoryCode);
-                                   // DicUtils. writeInfoToFile(getApplicationContext(), "MYWORD_INSERT" + ":" + insCategoryCode + ":" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), ".") + ":" + entryId);
+                            ((Button) dialog_layout.findViewById(R.id.my_dc_b_save)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if ("".equals(et_voc_name.getText().toString())) {
+                                        Toast.makeText(DicCategoryActivity.this, "단어장 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        alertDialog.dismiss();
+
+                                        vocName = et_voc_name.getText().toString();
+
+                                        String insCategoryCode = DicQuery.getInsCategoryCode(db);
+                                        db.execSQL(DicQuery.getInsNewCategory("MY", insCategoryCode, vocName));
+
+                                        Cursor wordCursor = db.rawQuery(DicQuery.getCategoryWord(kind), null);
+                                        while ( wordCursor.moveToNext() ) {
+                                            String entryId = wordCursor.getString(wordCursor.getColumnIndexOrThrow("ENTRY_ID"));
+                                            DicDb.insDicVoc(db, entryId, insCategoryCode);
+                                            // DicUtils. writeInfoToFile(getApplicationContext(), "MYWORD_INSERT" + ":" + insCategoryCode + ":" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), ".") + ":" + entryId);
+                                        }
+
+                                        DicUtils. writeNewInfoToFile(getApplicationContext(), db);
+
+                                        isChange = true;
+
+                                        Toast.makeText(getApplicationContext(), "단어장에 추가하였습니다.", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
+                            });
 
-                                DicUtils. writeNewInfoToFile(getApplicationContext(), db);
+                            ((Button) dialog_layout.findViewById(R.id.my_dc_b_close)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    alertDialog.dismiss();
+                                }
+                            });
 
-                                isChange = true;
-
-                                Toast.makeText(getApplicationContext(), "단어장에 추가하였습니다.", Toast.LENGTH_SHORT).show();
-                            }
+                            alertDialog.setCanceledOnTouchOutside(false);
+                            alertDialog.show();
+                            isChange = true;
                         }
                     });
-
-                    ((Button) dialog_layout.findViewById(R.id.my_dc_b_close)).setOnClickListener(new View.OnClickListener() {
+                    dlg.setNegativeButton("취소", null);
+                    dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            alertDialog.dismiss();
+                        public void onClick(DialogInterface dialog, int which) {
+                            Cursor wordCursor = db.rawQuery(DicQuery.getCategoryWord(kind), null);
+                            while ( wordCursor.moveToNext() ) {
+                                String entryId = wordCursor.getString(wordCursor.getColumnIndexOrThrow("ENTRY_ID"));
+                                DicDb.insDicVoc(db, entryId, kindCodes[mSelect]);
+                            }
+
+                            isChange = true;
                         }
                     });
-
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    alertDialog.show();
+                    dlg.show();
                 }
 
                 return true;

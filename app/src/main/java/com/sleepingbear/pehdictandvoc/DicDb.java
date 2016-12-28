@@ -59,6 +59,30 @@ public class DicDb {
         db.execSQL(sql.toString());
     }
 
+    public static void moveDicVoc(SQLiteDatabase db, String currKind, String copyKind, String entryId) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("DELETE FROM DIC_VOC " + CommConstants.sqlCR);
+        sql.append(" WHERE KIND = '" + copyKind + "'" + CommConstants.sqlCR);
+        sql.append("   AND ENTRY_ID = '" + entryId + "'" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+
+        sql.setLength(0);
+        sql.append("INSERT INTO DIC_VOC (KIND, ENTRY_ID, MEMORIZATION,RANDOM_SEQ, INS_DATE) " + CommConstants.sqlCR);
+        sql.append("SELECT '" + copyKind + "', ENTRY_ID, 'N', RANDOM(), '" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), ".") + "' " + CommConstants.sqlCR);
+        sql.append("  FROM DIC " + CommConstants.sqlCR);
+        sql.append(" WHERE ENTRY_ID = '" + entryId + "'" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+
+        sql.setLength(0);
+        sql.append("DELETE FROM DIC_VOC " + CommConstants.sqlCR);
+        sql.append(" WHERE KIND = '" + currKind + "'" + CommConstants.sqlCR);
+        sql.append("   AND ENTRY_ID = '" + entryId + "'" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+    }
+
     public static void delDicVoc(SQLiteDatabase db, String entryId, String kind) {
         StringBuffer sql = new StringBuffer();
         sql.append("DELETE FROM DIC_VOC " + CommConstants.sqlCR);

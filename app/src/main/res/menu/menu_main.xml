@@ -6,10 +6,12 @@
     <item android:id="@+id/action_patch" android:title="@string/action_patch"
         android:orderInCategory="300" app:showAsAction="never"
         android:icon="@mipmap/ic_delete_forever_white_24dp"/>
-    <item android:id="@+id/action_help" android:title="@string/action_help"
-        android:orderInCategory="400" app:showAsAction="never"
-        android:icon="@mipmap/ic_help_outline_white_24dp"/>
     <item android:id="@+id/action_delete" android:title="@string/action_delete"
         android:orderInCategory="300" app:showAsAction="never"
         android:icon="@mipmap/ic_delete_forever_white_24dp"/>
+    <item android:id="@+id/action_share" android:title="@string/action_share"
+        android:orderInCategory="400" app:showAsAction="never"/>
+    <item android:id="@+id/action_help" android:title="@string/action_help"
+        android:orderInCategory="400" app:showAsAction="never"
+        android:icon="@mipmap/ic_help_outline_white_24dp"/>
 </menu>

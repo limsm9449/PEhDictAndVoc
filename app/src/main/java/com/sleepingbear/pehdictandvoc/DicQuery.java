@@ -336,4 +336,40 @@ public class DicQuery {
 
         return sql.toString();
     }
+
+    /**
+     * 나를 제외한 단어장 종류
+     * @param code
+     * @return
+     */
+    public static String getVocabularyKindMeExceptContextMenu(String code) {
+        StringBuffer sql = new StringBuffer();
+
+        sql.append("SELECT CODE KIND, CODE_NAME KIND_NAME" + CommConstants.sqlCR);
+        sql.append("  FROM DIC_CODE" + CommConstants.sqlCR);
+        sql.append(" WHERE CODE_GROUP = 'MY'" + CommConstants.sqlCR);
+        sql.append("   AND CODE != '" + code + "'" + CommConstants.sqlCR);
+        sql.append(" ORDER BY CODE_NAME" + CommConstants.sqlCR);
+
+        DicUtils.dicSqlLog(sql.toString());
+
+        return sql.toString();
+    }
+
+    /**
+     * 단어장 종류
+     * @return
+     */
+    public static String getVocabularyKindContextMenu() {
+        StringBuffer sql = new StringBuffer();
+
+        sql.append("SELECT CODE KIND, CODE_NAME KIND_NAME" + CommConstants.sqlCR);
+        sql.append("  FROM DIC_CODE" + CommConstants.sqlCR);
+        sql.append(" WHERE CODE_GROUP = 'MY'" + CommConstants.sqlCR);
+        sql.append(" ORDER BY CODE_NAME" + CommConstants.sqlCR);
+
+        DicUtils.dicSqlLog(sql.toString());
+
+        return sql.toString();
+    }
 }

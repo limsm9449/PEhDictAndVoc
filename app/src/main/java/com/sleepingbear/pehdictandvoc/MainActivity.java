@@ -387,6 +387,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtras(bundle);
 
             startActivity(intent);
+        } else if (id == R.id.action_share) {
+            Intent msg = new Intent(Intent.ACTION_SEND);
+            msg.addCategory(Intent.CATEGORY_DEFAULT);
+            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영한사전 어플");
+            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? 단어암기에 도움이 되는 '최고의 단어장, 영한사전' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
+            msg.setType("text/plain");
+            startActivity(Intent.createChooser(msg, "어플 공유"));
         }
 
         return super.onOptionsItemSelected(item);
@@ -442,6 +449,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                   })
                   .show();
     }
+
+    private long backKeyPressedTime = 0;
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            Toast.makeText(getApplicationContext(), "'뒤로'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            //종료 시점에 변경 사항을 기록한다.
+            DicUtils.writeNewInfoToFile(this, db);
+
+            finish();
+        }
+    }
+
 }
 
 class MainPagerAdapter extends FragmentPagerAdapter {

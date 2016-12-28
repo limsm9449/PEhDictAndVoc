@@ -7,6 +7,7 @@
     <string name="action_sentence_write">Help</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="action_patch">패치 정보</string>
+    <string name="action_share">어플 공유</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
