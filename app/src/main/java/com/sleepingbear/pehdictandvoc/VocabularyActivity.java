@@ -469,6 +469,7 @@ class VocabularyCursorAdapter extends CursorAdapter {
             ((RelativeLayout) view.findViewById(R.id.my_rl_left)).setVisibility(View.GONE);
         }
 
+        ((CheckBox)view.findViewById(R.id.my_cb_check)).setChecked(isCheck[cursor.getPosition()]);
         if ( isCheck[cursor.getPosition()] ) {
             ((CheckBox)view.findViewById(R.id.my_cb_check)).setButtonDrawable(android.R.drawable.checkbox_on_background);
         } else {
