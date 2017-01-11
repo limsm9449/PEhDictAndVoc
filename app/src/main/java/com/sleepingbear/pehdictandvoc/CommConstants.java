@@ -15,6 +15,7 @@ public class CommConstants {
     public static int studyKind3 = 2;
     public static int studyKind4 = 3;
     public static int studyKind5 = 4;
+    public static int studyKind6 = 5;
 
     public static String tag = "ehDictAndVoc";
 

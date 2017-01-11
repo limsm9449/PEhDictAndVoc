@@ -104,11 +104,22 @@
             android:label="@string/title_activity_my_sample"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
+        <activity
+            android:name=".Study6Activity"
+            android:label="@string/title_activity_study6"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <service android:name=".MySpeechService">
+            <intent-filter>
+                <action android:name="com.sleepingbear.pehdictandvoc.MySpeechService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
