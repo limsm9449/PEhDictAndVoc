@@ -108,7 +108,7 @@ public class DictionaryFragment extends Fragment implements View.OnClickListener
 
         changeListView(false);
 
-        et_search.requestFocus();
+        //et_search.requestFocus();
 
         return mainView;
     }
