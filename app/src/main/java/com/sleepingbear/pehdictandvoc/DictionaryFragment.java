@@ -3,6 +3,7 @@ package com.sleepingbear.pehdictandvoc;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -49,6 +51,7 @@ public class DictionaryFragment extends Fragment implements View.OnClickListener
 
     private Activity mActivity;
     private Cursor dictionaryCursor;
+    private int dSelect = 0;
 
     DicSearchTask task;
 
@@ -174,7 +177,7 @@ public class DictionaryFragment extends Fragment implements View.OnClickListener
                     }
                 }
 
-                sql.append("SELECT SEQ _id, ORD,  WORD, MEAN, ENTRY_ID, SPELLING, HANMUN FROM DIC A WHERE KIND = 'F' AND WORD IN ('" + word.substring(0, word.length() -1).toLowerCase().replaceAll(",","','") + "')" + CommConstants.sqlCR);
+                sql.append("SELECT SEQ _id, ORD,  WORD, MEAN, ENTRY_ID, SPELLING, HANMUN FROM DIC A WHERE WORD IN ('" + word.substring(0, word.length() -1).toLowerCase().replaceAll(",","','") + "')" + CommConstants.sqlCR);
                 sql.append("UNION" + CommConstants.sqlCR);
                 sql.append("SELECT SEQ _id, ORD,  WORD, MEAN, ENTRY_ID, SPELLING, (SELECT COUNT(*) FROM DIC_VOC WHERE ENTRY_ID = A.ENTRY_ID) MY_VOC FROM DIC A WHERE KIND = 'F' AND WORD IN (SELECT DISTINCT WORD FROM DIC_TENSE WHERE WORD_TENSE IN ('" + oneWord.substring(0, oneWord.length() -1).toLowerCase().replaceAll(",","','") + "'))" + CommConstants.sqlCR);
                 sql.append(" ORDER BY ORD" + CommConstants.sqlCR);
@@ -219,6 +222,7 @@ public class DictionaryFragment extends Fragment implements View.OnClickListener
 
         dictionaryListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         dictionaryListView.setOnItemClickListener(itemClickListener);
+        dictionaryListView.setOnItemLongClickListener(itemLongClickListener);
         dictionaryListView.setSelection(0);
 
         //소프트 키보드 없애기
@@ -253,6 +257,44 @@ public class DictionaryFragment extends Fragment implements View.OnClickListener
 
                 startActivity(intent);
             }
+        }
+    };
+
+    AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            //단어장 다이얼로그 생성
+            Cursor cursor = db.rawQuery(DicQuery.getVocabularyCategory(), null);
+            final String[] kindCodes = new String[cursor.getCount()];
+            final String[] kindCodeNames = new String[cursor.getCount()];
+
+            int idx = 0;
+            while ( cursor.moveToNext() ) {
+                kindCodes[idx] = cursor.getString(cursor.getColumnIndexOrThrow("KIND"));
+                kindCodeNames[idx] = cursor.getString(cursor.getColumnIndexOrThrow("KIND_NAME"));
+                idx++;
+            }
+            cursor.close();
+
+            final AlertDialog.Builder dlg = new AlertDialog.Builder(mActivity);
+            dlg.setTitle("단어장 선택");
+            dlg.setSingleChoiceItems(kindCodeNames, dSelect, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+                    dSelect = arg1;
+                }
+            });
+            dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Cursor cur = (Cursor) dicAdapter.getCursor();
+                    DicDb.insDicVoc(db, cur.getString(cur.getColumnIndexOrThrow("ENTRY_ID")), kindCodes[dSelect]);
+                }
+            });
+
+            dlg.show();
+
+            return false;
         }
     };
 

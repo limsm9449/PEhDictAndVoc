@@ -51,7 +51,7 @@ public class WordViewActivity extends AppCompatActivity implements View.OnClickL
     private String entryId;
     private String word;
     private String seq;
-    private String vocKind;
+    private int dSelect = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,16 +106,16 @@ public class WordViewActivity extends AppCompatActivity implements View.OnClickL
 
                 final AlertDialog.Builder dlg = new AlertDialog.Builder(mActivity);
                 dlg.setTitle("단어장 선택");
-                dlg.setSingleChoiceItems(kindCodeNames, 0, new DialogInterface.OnClickListener() {
+                dlg.setSingleChoiceItems(kindCodeNames, dSelect, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        vocKind = kindCodes[arg1];
+                        dSelect = arg1;
                     }
                 });
                 dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DicDb.insDicVoc(db, entryId, vocKind);
+                        DicDb.insDicVoc(db, entryId, kindCodes[dSelect]);
                         ImageButton ib_myvoc = (ImageButton)findViewById(R.id.my_c_wv_ib_myvoc);
                         ib_myvoc.setImageResource(android.R.drawable.star_on);
                         myVoc = true;            }
