@@ -30,14 +30,14 @@ public class PatchActivity extends AppCompatActivity {
         StringBuffer patch = new StringBuffer();
 
         patch.append("* 신규 패치" + CommConstants.sqlCR);
+        patch.append("- 단어장 상세 부분을 네이버 검색, 다움 검색으로 변경하였습니다." + CommConstants.sqlCR);
+        patch.append("- 영어사전, 영어회화, 영어신문을 하나로 통합하여 사용하면 좋을듯해서 '최고의 영어학습' 어플을 새로 만들었습니다. 한개의 어플로 계속 기능개선을 할 예정입니다." + CommConstants.sqlCR);
+        patch.append("" + CommConstants.sqlCR);
         patch.append("" + CommConstants.sqlCR);
         patch.append("- 사전 단어 검색시 여러 단어로 검색을 하도록 수정을 했습니다." + CommConstants.sqlCR);
         patch.append("  .'food love'을 입력하시면 food,love을 검색 합니다." + CommConstants.sqlCR);
         patch.append("  .'fo'을 입력하시면 fo로 시작하는 단어를 검색합니다." + CommConstants.sqlCR);
         patch.append("- 검색된 사전에서 롱클릭을 하면 바로 단어장으로 등록을 할 수 있습니다." + CommConstants.sqlCR);
-        patch.append("" + CommConstants.sqlCR);
-        patch.append("" + CommConstants.sqlCR);
-
         patch.append("- 검색단어 입력후 X 버튼 클릭시 재조회로 불편함이 있어 입력을 받도록 수정" + CommConstants.sqlCR);
         patch.append("- 단어장에서 TTS로 단어, 뜻을 듣는 기능 추가 - 상단 Context Menu에서 TTS 듣기 선택" + CommConstants.sqlCR);
         patch.append("- 단어학습에서 '카드형 4지선다 TTS 학습' 기능 추가" + CommConstants.sqlCR);
