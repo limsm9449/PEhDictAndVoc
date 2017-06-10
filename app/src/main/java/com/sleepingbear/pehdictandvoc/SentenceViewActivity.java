@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.CursorAdapter;
@@ -22,20 +20,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.memetix.mst.language.Language;
-import com.memetix.mst.translate.Translate;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class SentenceViewActivity extends AppCompatActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
@@ -43,12 +34,14 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
 
     public DbHelper dbHelper;
     public SQLiteDatabase db;
-    public SentenceViewCursorAdapter sentenceViewAdapter;
+    public SentenceViewActivityCursorAdapter adapter;
     public int mSelect = 0;
     public String han;
     public String notHan;
+    public String sampleSeq;
     public boolean isMySample = false;
-    public boolean isChange = false;
+
+    private int fontSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +56,7 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
 
-        ActionBar ab = (ActionBar) getSupportActionBar();
+        ActionBar ab = getSupportActionBar();
         ab.setTitle("문장 상세");
         ab.setHomeButtonEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
@@ -72,43 +65,17 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
         db = dbHelper.getWritableDatabase();
 
         Bundle b = getIntent().getExtras();
-        if ( "".equals(b.getString("foreign")) ) {
-            ((TextView) findViewById(R.id.my_c_sv_tv_foreign)).setText("");
-            ((TextView) findViewById(R.id.my_c_sv_tv_han)).setText("");
+        notHan = b.getString("foreign");
+        han = b.getString("han");
+        sampleSeq = b.getString("sampleSeq");
 
-            getNewSentence();
-        } else {
-            notHan = b.getString("foreign");
-            han = b.getString("han");
+        fontSize = Integer.parseInt( DicUtils.getPreferencesValue( this, CommConstants.preferences_font ) );
 
-            if ( "".equals(han) ) {
-                new Thread() {
-                    public void run() {
-                        Translate.setClientId("limsm9449");
-                        Translate.setClientSecret("4uv10iwHn+rZrUr9reTDRBML5l1JdpgHXOlgfaKYOjQ=");
+        changeListView();
 
-                        try {
-                            han = Translate.execute(notHan, Language.AUTO_DETECT, Language.KOREAN);
-
-                            Bundle bundle = new Bundle();
-                            bundle.putString("han", han);
-
-                            Message msg = handler.obtainMessage();
-                            msg.setData(bundle);
-                            handler.sendMessage(msg);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-            } else {
-                changeListView();
-            }
-        }
-
-        ImageButton mySample = (ImageButton) findViewById(R.id.my_c_sv_ib_mysample);
+        ImageButton mySample = (ImageButton) findViewById(R.id.my_ib_mysample);
         mySample.setOnClickListener(this);
-        if ( DicDb.isExistMySample(db, notHan) ) {
+        if ( DicDb.isExistMySample(db, sampleSeq) ) {
             isMySample = true;
             mySample.setImageResource(android.R.drawable.star_on);
         } else {
@@ -116,8 +83,12 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
             mySample.setImageResource(android.R.drawable.star_off);
         }
 
-        ImageButton ib_tts = (ImageButton) findViewById(R.id.my_c_sv_ib_tts);
+        ImageButton ib_tts = (ImageButton) findViewById(R.id.my_ib_tts);
         ib_tts.setOnClickListener(this);
+
+        AdView av = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        av.loadAd(adRequest);
     }
 
     public void changeListView() {
@@ -148,8 +119,11 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
             }
         }
 
-        ((TextView) findViewById(R.id.my_c_sv_tv_foreign)).setText(notHan);
-        ((TextView) findViewById(R.id.my_c_sv_tv_han)).setText(han);
+        ((TextView) findViewById(R.id.my_tv_foreign)).setText(notHan);
+        ((TextView) findViewById(R.id.my_tv_han)).setText(han);
+
+        ((TextView) findViewById(R.id.my_tv_foreign)).setTextSize(fontSize + 2);
+        ((TextView) findViewById(R.id.my_tv_han)).setTextSize(fontSize);
 
         StringBuffer sql = new StringBuffer();
         if ( "".equals(word) ) {
@@ -163,16 +137,16 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
         DicUtils.dicSqlLog(sql.toString());
         wordCursor = db.rawQuery(sql.toString(), null);
 
-        ListView dicViewListView = (ListView) this.findViewById(R.id.my_c_sv_lv_list);
-        sentenceViewAdapter = new SentenceViewCursorAdapter(this, wordCursor, 0);
-        dicViewListView.setAdapter(sentenceViewAdapter);
+        ListView dicViewListView = (ListView) this.findViewById(R.id.my_lv);
+        adapter = new SentenceViewActivityCursorAdapter(this, wordCursor, 0);
+        dicViewListView.setAdapter(adapter);
         dicViewListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         dicViewListView.setOnItemClickListener(itemClickListener);
 
         dicViewListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cur = (Cursor) sentenceViewAdapter.getItem(position);
+                Cursor cur = (Cursor) adapter.getItem(position);
                 cur.moveToPosition(position);
 
                 final String entryId = cur.getString(cur.getColumnIndexOrThrow("ENTRY_ID"));
@@ -193,7 +167,7 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
                 cursor.close();
 
                 final AlertDialog.Builder dlg = new AlertDialog.Builder(SentenceViewActivity.this);
-                dlg.setTitle("메뉴 선택");
+                dlg.setTitle("단어장 선택");
                 dlg.setSingleChoiceItems(kindCodeNames, mSelect, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -205,21 +179,24 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         DicDb.insDicVoc(db, entryId, kindCodes[mSelect]);
-                        sentenceViewAdapter.dataChange();
-                        DicUtils. writeInfoToFile(getApplicationContext(), "MYWORD_INSERT" + ":" + kindCodes[mSelect] + ":" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(),".") + ":" + entryId);
+                        DicUtils.setDbChange(getApplicationContext());  //DB 변경 체크
+
+                        adapter.dataChange();
+
+                        DicUtils.setDbChange(getApplicationContext()); //변경여부 체크
                     }
                 });
                 dlg.show();
 
                 return true;
-            };
+            }
         });
     }
 
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Cursor cur = (Cursor) sentenceViewAdapter.getItem(position);
+            Cursor cur = (Cursor) adapter.getItem(position);
 
             Intent intent = new Intent(getApplication(), WordViewActivity.class);
             Bundle bundle = new Bundle();
@@ -234,34 +211,25 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.my_c_sv_ib_mysample :
-                ImageButton mySample = (ImageButton) findViewById(R.id.my_c_sv_ib_mysample);
+            case R.id.my_ib_mysample:
+                ImageButton mySample = (ImageButton) findViewById(R.id.my_ib_mysample);
                 if ( isMySample ) {
                     isMySample = false;
                     mySample.setImageResource(android.R.drawable.star_off);
 
-                    DicDb.delDicMySample(db, notHan);
-
-                    // 기록..
-                    DicUtils.writeInfoToFile(getApplicationContext(), "MYSAMPLE_DELETE" + ":" + notHan);
-
-                    isChange = true;
+                    DicDb.delConversationFromNote(db, "C010001", Integer.parseInt(sampleSeq));
                 } else {
                     isMySample = true;
                     mySample.setImageResource(android.R.drawable.star_on);
 
-                    DicDb.insDicMySample(db, notHan, han, DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), "."));
-
-                    // 기록..
-                    DicUtils.writeInfoToFile(getApplicationContext(), "MYSAMPLE_INSERT" + ":" + notHan + ":" + han);
-
-                    isChange = true;
+                    DicDb.insConversationToNote(db, "C010001", sampleSeq);
                 }
+                DicUtils.setDbChange(getApplicationContext());  //DB 변경 체크
 
                 break;
-            case R.id.my_c_sv_ib_tts:
+            case R.id.my_ib_tts:
                 //myTTS.speak(((TextView)this.findViewById(R.id.my_c_wv_tv_spelling)).getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
-                myTTS.speak(((TextView)this.findViewById(R.id.my_c_sv_tv_foreign)).getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+                myTTS.speak(((TextView)this.findViewById(R.id.my_tv_foreign)).getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
                 break;
         }
     }
@@ -269,7 +237,7 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // 상단 메뉴 구성
-        getMenuInflater().inflate(R.menu.menu_sentenceview, menu);
+        getMenuInflater().inflate(R.menu.menu_help, menu);
 
         return true;
     }
@@ -279,18 +247,10 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            Bundle conData = new Bundle();
-            conData.putBoolean("isChange", isChange);
-            Intent intent = new Intent();
-            intent.putExtras(conData);
-            setResult(RESULT_OK, intent);
-
             finish();
-        } else if (id == R.id.action_sentence_write) {
-            getNewSentence();
         } else if (id == R.id.action_help) {
             Bundle bundle = new Bundle();
-            bundle.putString("SCREEN", "SENTENCEVIEW");
+            bundle.putString("SCREEN", CommConstants.screen_sentenceView);
 
             Intent intent = new Intent(getApplication(), HelpActivity.class);
             intent.putExtras(bundle);
@@ -299,61 +259,6 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
 
         return super.onOptionsItemSelected(item);
     }
-
-    public void getNewSentence() {
-        LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout newSentenceLayout = (LinearLayout) li.inflate(R.layout.dialog_new_sentence, null);
-
-        final EditText newSentece = (EditText) newSentenceLayout.findViewById(R.id.my_d_ns_et1);
-
-        new AlertDialog.Builder(this)
-                .setTitle("문장을 입력해 주세요.")
-                .setView(newSentenceLayout)
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if ( "".equals(newSentece.getText().toString()) ) {
-                            new android.app.AlertDialog.Builder(SentenceViewActivity.this)
-                                    .setTitle("알림")
-                                    .setMessage("번역할 문장을 입력해 주세요.")
-                                    .setPositiveButton("번역", null)
-                                    .show();
-                        } else {
-                            notHan = newSentece.getText().toString().trim();
-                            han = "";
-
-                            new Thread() {
-                                public void run() {
-                                    Translate.setClientId("limsm9449");
-                                    Translate.setClientSecret("4uv10iwHn+rZrUr9reTDRBML5l1JdpgHXOlgfaKYOjQ=");
-
-                                    try {
-                                        han = Translate.execute(notHan, Language.AUTO_DETECT, Language.KOREAN);
-
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("han", han);
-
-                                        Message msg = handler.obtainMessage();
-                                        msg.setData(bundle);
-                                        handler.sendMessage(msg);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }.start();
-                        }
-                    }
-                })
-                .setNegativeButton("취소",null)
-                .show();
-    }
-
-    final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            han = ((Bundle)msg.getData()).getString("han");
-            changeListView();
-        }
-    };
 
     public void onInit(int status) {
         Locale loc = new Locale("en");
@@ -375,7 +280,8 @@ public class SentenceViewActivity extends AppCompatActivity implements View.OnCl
     }
 }
 
-class SentenceViewCursorAdapter extends CursorAdapter {
+class SentenceViewActivityCursorAdapter extends CursorAdapter {
+    int fontSize = 0;
     private SQLiteDatabase mDb;
     private Cursor mCursor;
 
@@ -387,10 +293,11 @@ class SentenceViewCursorAdapter extends CursorAdapter {
         protected int position;
     }
 
-    public SentenceViewCursorAdapter(Context context, Cursor cursor, int flags) {
+    public SentenceViewActivityCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, 0);
         mCursor = cursor;
         mDb = ((SentenceViewActivity)context).db;
+        fontSize = Integer.parseInt( DicUtils.getPreferencesValue( context, CommConstants.preferences_font ) );
     }
 
     public void dataChange() {
@@ -406,7 +313,7 @@ class SentenceViewCursorAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.content_sentence_view_item, parent, false);
 
         ViewHolder viewHolder = new ViewHolder();
-        viewHolder.myvoc = (ImageButton) view.findViewById(R.id.my_c_svi_ib_myvoc);
+        viewHolder.myvoc = (ImageButton) view.findViewById(R.id.my_ib_myvoc);
         viewHolder.myvoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -414,14 +321,10 @@ class SentenceViewCursorAdapter extends CursorAdapter {
 
                 if ( viewHolder.isMyVoc ) {
                     DicDb.delDicVocAll(mDb, viewHolder.entryId);
-
-                    // 기록..
-                    DicUtils.writeInfoToFile(context, "MYWORD_DELETE_ALL" + ":" + viewHolder.entryId);
+                    DicUtils.setDbChange(context);  //DB 변경 체크
                 } else {
-                    DicDb.insDicVoc(mDb, viewHolder.entryId, "MY0000");
-
-                    // 기록..
-                    DicUtils.writeInfoToFile(context, "MYWORD_INSERT" + ":" + "MY0000" + ":" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), ".") + ":" + viewHolder.entryId);
+                    DicDb.insDicVoc(mDb, viewHolder.entryId, CommConstants.defaultVocabularyCode);
+                    DicUtils.setDbChange(context);  //DB 변경 체크
                 }
 
                 dataChange();
@@ -441,17 +344,21 @@ class SentenceViewCursorAdapter extends CursorAdapter {
         viewHolder.position = cursor.getPosition();
         viewHolder.myvoc.setTag(viewHolder);
 
-        ((TextView) view.findViewById(R.id.my_c_svi_word)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("WORD"))));
-        ((TextView) view.findViewById(R.id.my_c_svi_spelling)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("SPELLING"))));
-        ((TextView) view.findViewById(R.id.my_c_svi_mean)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("MEAN"))));
+        ((TextView) view.findViewById(R.id.my_tv_word)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("WORD"))));
+        ((TextView) view.findViewById(R.id.my_tv_spelling)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("SPELLING"))));
+        ((TextView) view.findViewById(R.id.my_tv_mean)).setText(DicUtils.getString(cursor.getString(cursor.getColumnIndexOrThrow("MEAN"))));
 
-        ImageButton ib_myvoc = (ImageButton)view.findViewById(R.id.my_c_svi_ib_myvoc);
-        if ( cursor.getInt(cursor.getColumnIndexOrThrow("MY_VOC")) > 0 ) {
+        ImageButton ib_myvoc = (ImageButton)view.findViewById(R.id.my_ib_myvoc);
+        if ( cursor.getInt(cursor.getColumnIndexOrThrow(CommConstants.vocabularyCode)) > 0 ) {
             ib_myvoc.setImageResource(android.R.drawable.star_on);
             viewHolder.isMyVoc = true;
         } else {
             ib_myvoc.setImageResource(android.R.drawable.star_off);
             viewHolder.isMyVoc = false;
         }
+
+        ((TextView) view.findViewById(R.id.my_tv_word)).setTextSize(fontSize);
+        ((TextView) view.findViewById(R.id.my_tv_spelling)).setTextSize(fontSize);
+        ((TextView) view.findViewById(R.id.my_tv_mean)).setTextSize(fontSize);
     }
 }

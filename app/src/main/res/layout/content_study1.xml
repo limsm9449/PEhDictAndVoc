@@ -5,14 +5,15 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_study1"
-    tools:context="com.sleepingbear.pehdictandvoc.Study2Activity">
+    tools:context="com.sleepingbear.ehdictandvoc.Study2Activity">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left|top"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/adView">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -139,7 +140,7 @@
             android:layout_height="0.5dp"
             android:background="@color/my_divider"
             android:layout_alignParentTop="true"
-            android:layout_above="@+id/my_a_cat_lv_category"
+            android:layout_above="@+id/my_a_lv"
             android:layout_marginTop="5dp" />
 
         <ListView
@@ -154,4 +155,12 @@
     </LinearLayout>
 
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

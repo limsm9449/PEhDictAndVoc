@@ -1,59 +1,30 @@
 package com.sleepingbear.pehdictandvoc;
 
-
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private ViewPager mPager;
-    private MainPagerAdapter adapter;
-
     private DbHelper dbHelper;
     private SQLiteDatabase db;
-
-    private TabLayout tabLayout;
-
-    private int selectedTab = 0;
-
-    private FloatingActionButton fab;
-
-    private Activity mActivity;
-    public boolean mIsCategory = true;
 
     private static final int MY_PERMISSIONS_REQUEST = 0;
 
@@ -64,140 +35,173 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        System.out.println("=============================================== App Start ======================================================================");
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
 
+        System.out.println("=============================================== App Start ======================================================================");
         dbHelper = new DbHelper(this);
         db = dbHelper.getWritableDatabase();
-
-        mActivity = this;
 
         //DB가 새로 생성이 되었으면 이전 데이타를 DB에 넣고 Flag를 N 처리함
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if ( "Y".equals(prefs.getString("db_new", "N")) ) {
             DicUtils.dicLog("backup data import");
 
-            DicUtils.readInfoFromFile(this, db);
+            DicUtils.readInfoFromFile(this, db, "");
 
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("db_new", "N");
             editor.commit();
-        };
+        }
 
-        //카테고리 추가 기능 구현
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                final View dialog_layout = inflater.inflate(R.layout.dialog_category_add, (ViewGroup) findViewById(R.id.my_d_category_root));
+        checkPermission();
 
-                //dialog 생성..
-                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-                builder.setView(dialog_layout);
-                final AlertDialog alertDialog = builder.create();
+        findViewById(R.id.my_b_foreign_dic).setOnClickListener(this);
+        findViewById(R.id.my_b_dic_history).setOnClickListener(this);
 
-                ((TextView) dialog_layout.findViewById(R.id.my_d_category_add_tv_title)).setText("단어장 추가");
-                ((TextView) dialog_layout.findViewById(R.id.my_d_category_add_tv_title)).setOnLongClickListener(hiddenFunc);
-                final EditText et_ins = ((EditText) dialog_layout.findViewById(R.id.my_d_category_add_et_ins));
-                ((Button) dialog_layout.findViewById(R.id.my_d_category_add_b_ins)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if ("".equals(et_ins.getText().toString())) {
-                            Toast.makeText(getApplicationContext(), "단어장 이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            alertDialog.dismiss();
+        findViewById(R.id.my_b_web_translate).setOnClickListener(this);
+        findViewById(R.id.my_b_web_dic).setOnClickListener(this);
 
-                            String insCategoryCode = DicQuery.getInsCategoryCode(db);
-                            db.execSQL(DicQuery.getInsNewCategory("MY", insCategoryCode, et_ins.getText().toString()));
+        findViewById(R.id.my_b_news).setOnClickListener(this);
+        findViewById(R.id.my_b_news_word).setOnClickListener(this);
 
-                            //기록
-                            DicUtils.writeInfoToFile(getApplicationContext(), "CATEGORY_INSERT" + ":" + insCategoryCode + ":" + et_ins.getText().toString());
+        findViewById(R.id.my_b_conversation_study).setOnClickListener(this);
+        findViewById(R.id.my_b_pattern).setOnClickListener(this);
+        findViewById(R.id.my_b_conv_search).setOnClickListener(this);
+        findViewById(R.id.my_b_conv_note).setOnClickListener(this);
 
-                            ((VocabularyFragment) adapter.getItem(selectedTab)).changeListView();
+        findViewById(R.id.my_b_idiom).setOnClickListener(this);
+        findViewById(R.id.my_b_naver_conv).setOnClickListener(this);
+        findViewById(R.id.my_b_daum).setOnClickListener(this);
 
-                            Toast.makeText(getApplicationContext(), "단어장을 추가하였습니다.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                ((Button) dialog_layout.findViewById(R.id.my_d_category_add_b_close)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
+        findViewById(R.id.my_b_today).setOnClickListener(this);
+        findViewById(R.id.my_b_voc).setOnClickListener(this);
+        findViewById(R.id.my_b_voc_study).setOnClickListener(this);
 
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.show();
-            }
-        });
+        AdView av = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        av.loadAd(adRequest);
+    }
 
-        ActionBar ab = (ActionBar) getSupportActionBar();
-        ab.setTitle("영한사전 & 단어장(유료)");
-        //ab.setIcon(R.mipmap.ic_launcher);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // 상단 메뉴 구성
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        // ViewPaper 를 정의한다.
-        mPager = (ViewPager) findViewById(R.id.main_pager);
-        adapter = new MainPagerAdapter(getSupportFragmentManager(), this);
-        mPager.setAdapter(adapter);
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+        return true;
+    }
 
-            @Override
-            public void onPageSelected(int position) {
-                DicUtils.dicLog(this.getClass().toString() + " onPageSelected" + " : " + position);
-                selectedTab = position;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-                //mPager.setCurrentItem(position);
-                setChangeViewPaper(position, CommConstants.changeKind_title);
-            }
+        if (id == R.id.action_share) {
+            Intent msg = new Intent(Intent.ACTION_SEND);
+            msg.addCategory(Intent.CATEGORY_DEFAULT);
+            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영어학습 어플");
+            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어학습' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.ehdictandvoc ");
+            msg.setType("text/plain");
+            startActivity(Intent.createChooser(msg, "어플 공유"));
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-        //mPager.setCurrentItem(0);
-        //setChangeViewPaper(selectedTab, CommConstants.changeKind_title);
+            return true;
+        } else if (id == R.id.action_patch) {
+            startActivity(new Intent(getApplication(), PatchActivity.class));
 
-        // 상단의 Tab 을 정의한다.
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mPager);
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                DicUtils.dicLog(this.getClass().toString() + " onTabSelected" + " : " + tab.getPosition());
-                selectedTab = tab.getPosition();
-                //tab 변경
-                mPager.setCurrentItem(selectedTab);
+            return true;
+        } else if (id == R.id.action_help) {
+            Bundle bundle = new Bundle();
+            Intent helpIntent = new Intent(getApplication(), HelpActivity.class);
+            helpIntent.putExtras(bundle);
+            startActivity(helpIntent);
 
-                //setChangeViewPaper(selectedTab, CommConstants.changeKind_title);
+            return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(getApplication(), SettingsActivity.class));
 
-                //메뉴 구성
-                invalidateOptionsMenu();
-            }
+            return true;
+        } else if (id == R.id.action_no_ad) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.sleepingbear.pehdictandvoc")));
+        }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
+        return super.onOptionsItemSelected(item);
+    }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                DicUtils.dicLog(this.getClass().toString() + " onTabReselected" + " : " + tab.getPosition());
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        DicUtils.dicLog("onClick");
+        Bundle bundle = new Bundle();
+        switch (v.getId()) {
+            case R.id.my_b_foreign_dic:
+                bundle.putString("KIND", CommConstants.dictionaryKind_f);
 
-        String flag_other = "other_20161104";
-        if ( "N".equals(prefs.getString(flag_other, "N")) ) {
-            DicDb.patch1(db);
+                Intent englishIntent = new Intent(getApplication(), DictionaryActivity.class);
+                englishIntent.putExtras(bundle);
+                startActivity(englishIntent);
 
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(flag_other, "Y");
-            editor.commit();
-        };
+                break;
+            case R.id.my_b_dic_history:
+                Intent dicHistoryIntent = new Intent(getApplication(), DictionaryHistoryActivity.class);
+                dicHistoryIntent.putExtras(bundle);
+                startActivity(dicHistoryIntent);
 
-		checkPermission();
+                break;
+            case R.id.my_b_web_dic:
+                Intent webIntent = new Intent(getApplication(), WebDictionaryActivity.class);
+                webIntent.putExtras(bundle);
+                startActivity(webIntent);
+
+                break;
+            case R.id.my_b_web_translate:
+                Intent webTranslateIntent = new Intent(getApplication(), WebTranslateActivity.class);
+                webTranslateIntent.putExtras(bundle);
+                startActivity(webTranslateIntent);
+
+                break;
+            case R.id.my_b_news:
+                Intent newsIntent = new Intent(getApplication(), NewsActivity.class);
+                newsIntent.putExtras(bundle);
+                startActivity(newsIntent);
+
+                break;
+            case R.id.my_b_news_word:
+                Intent newClickWordIntent = new Intent(getApplication(), NewsClickWordActivity.class);
+                newClickWordIntent.putExtras(bundle);
+                startActivity(newClickWordIntent);
+
+                break;
+            case R.id.my_b_conversation_study:
+                startActivity(new Intent(getApplication(), ConversationStudyActivity.class));
+
+                break;
+            case R.id.my_b_pattern:
+                startActivity(new Intent(getApplication(), PatternActivity.class));
+                break;
+            case R.id.my_b_conv_search:
+                startActivity(new Intent(getApplication(), ConversationActivity.class));
+                break;
+            case R.id.my_b_conv_note:
+                startActivity(new Intent(getApplication(), ConversationNoteActivity.class));
+                break;
+            case R.id.my_b_idiom:
+                startActivity(new Intent(getApplication(), IdiomActivity.class));
+                break;
+            case R.id.my_b_naver_conv:
+                startActivity(new Intent(getApplication(), NaverConversationActivity.class));
+                break;
+            case R.id.my_b_daum:
+                startActivity(new Intent(getApplication(), DaumVocabularyActivity.class));
+                break;
+            case R.id.my_b_today:
+                startActivity(new Intent(getApplication(), TodayActivity.class));
+                break;
+            case R.id.my_b_voc:
+                startActivity(new Intent(getApplication(), VocabularyNoteActivity.class));
+                break;
+            case R.id.my_b_voc_study:
+                startActivity(new Intent(getApplication(), StudyActivity.class));
+
+                break;
+        }
     }
 
     public boolean checkPermission() {
@@ -232,227 +236,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    protected View.OnLongClickListener hiddenFunc = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            LinearLayout newSentenceLayout = (LinearLayout) li.inflate(R.layout.dialog_hidden_function, null);
-
-            final EditText pwd = (EditText) newSentenceLayout.findViewById(R.id.my_d_hd_et1);
-
-            new android.support.v7.app.AlertDialog.Builder(MainActivity.this)
-                    .setTitle("코드를 입력해주세요.")
-                    .setView(newSentenceLayout)
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if ( "F1".equals(pwd.getText().toString()) ) {
-                                Intent intent = new Intent(getApplication(), LogActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("CODE", pwd.getText().toString());
-                                intent.putExtras(bundle);
-
-                                startActivity(intent);
-                            }
-                        }
-                    })
-                    .setNegativeButton("취소",null)
-                    .show();
-            return false;
-        }
-    };
-
-    //뷰의 내용이 변경되었을때...
-    public void setChangeViewPaper(int position, int changeKind) {
-        DicUtils.dicLog(this.getClass().toString() + " setChangeViewPaper" + " : " + position);
-        try {
-            fab.setVisibility(View.VISIBLE);
-
-            if ( adapter.getItem(position) == null ) {
-                return;
-            }
-
-            if (position == 0) {
-                //단어장
-                if ( ((VocabularyFragment) adapter.getItem(position)) != null ) {
-                    ((VocabularyFragment) adapter.getItem(position)).changeListView();
-                }
-            } else if (position == 1) {
-                //사전
-                fab.setVisibility(View.INVISIBLE);
-            } else if (position == 2) {
-                //오늘의 단어
-                fab.setVisibility(View.INVISIBLE);
-            }
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            DicUtils.dicLog(e.toString());
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-        }
-    }
-
-    private View.OnClickListener mPagerListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String text = ((Button) v).getText().toString();
-            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // 상단 메뉴 구성
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        ((MenuItem)menu.findItem(R.id.action_delete)).setVisible(false);
-
-        if ( selectedTab == 0 || selectedTab == 2 ) {
-            ((MenuItem)menu.findItem(R.id.action_delete)).setVisible(true);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_delete) {
-            if (selectedTab == 0) {
-                new AlertDialog.Builder(this)
-                        .setTitle("알림")
-                        .setMessage("단어장을 초기화 하시겠습니까?")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                confirmAllDelete();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .show();
-            } else if (selectedTab == 2) {
-                new AlertDialog.Builder(this)
-                        .setTitle("알림")
-                        .setMessage("오늘의 단어를 초기화 하시겠습니까?")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                confirmAllDelete();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .show();
-            }
-        } else if (id == R.id.action_help) {
-            Bundle bundle = new Bundle();
-            if ( selectedTab == 0 ) {
-                bundle.putString("SCREEN", "VOCABULARY");
-            } else if ( selectedTab == 1 ) {
-                bundle.putString("SCREEN", "DICTIONARY");
-            } else if ( selectedTab == 2 ) {
-                bundle.putString("SCREEN", "TODAY");
-            }
-
-            Intent intent = new Intent(getApplication(), HelpActivity.class);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        } else if (id == R.id.action_other) {
-            if ( checkPermission() ==  true ) {
-                Intent intent = new Intent(getApplication(), OtherActivity.class);
-                Bundle bundle = new Bundle();
-                intent.putExtras(bundle);
-
-                startActivityForResult(intent, CommConstants.a_other);
-            }
-        } else if (id == R.id.action_patch) {
-            Intent intent = new Intent(getApplication(), PatchActivity.class);
-            Bundle bundle = new Bundle();
-            intent.putExtras(bundle);
-
-            startActivity(intent);
-        } else if (id == R.id.action_share) {
-            Intent msg = new Intent(Intent.ACTION_SEND);
-            msg.addCategory(Intent.CATEGORY_DEFAULT);
-            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영한사전 어플");
-            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? 단어암기에 도움이 되는 '최고의 단어장, 영한사전' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
-            msg.setType("text/plain");
-            startActivity(Intent.createChooser(msg, "어플 공유"));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        DicUtils.dicLog("onActivityResult : " + requestCode + " : " + resultCode);
-        switch ( requestCode ) {
-            case CommConstants.a_other :
-                if ( resultCode == Activity.RESULT_OK && "Y".equals(data.getStringExtra("isChange")) ) {
-                    if ( selectedTab == 0 ) {
-                        ((VocabularyFragment) adapter.getItem(0)).changeListView();
-                    } else if ( selectedTab == 2 ) {
-                        ((TodayFragment) adapter.getItem(2)).changeListView();
-                    }
-                }
-                break;
-            case CommConstants.a_vocabulary :
-                ((VocabularyFragment) adapter.getItem(0)).changeListView();
-                break;
-            case CommConstants.a_dicCategory :
-                ((VocabularyFragment) adapter.getItem(0)).changeListView();
-                break;
-        }
-    }
-
-    public void confirmAllDelete() {
-          new AlertDialog.Builder(this)
-                  .setTitle("알림")
-                  .setMessage("초기화 후에는 데이타를 복구할 수 없습니다.")
-                  .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                          if (selectedTab == 0) {
-                              DicDb.initVocabulary(db);
-
-                              DicUtils.writeNewInfoToFile(getApplicationContext(), db);
-
-                              ((VocabularyFragment) adapter.getItem(selectedTab)).changeListView();
-                          } else if (selectedTab == 2) {
-                              DicDb.initToday(db);
-
-                              DicUtils.writeNewInfoToFile(getApplicationContext(), db);
-
-                              ((TodayFragment) adapter.getItem(selectedTab)).changeListView();
-                          }
-                      }
-                  })
-                  .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                      @Override
-                      public void onClick(DialogInterface dialog, int which) {
-                      }
-                  })
-                  .show();
-    }
-
     private long backKeyPressedTime = 0;
     @Override
     public void onBackPressed() {
+        //종료 시점에 변경 사항을 기록한다.
+        if ( "Y".equals(DicUtils.getDbChange(getApplicationContext())) ) {
+            DicUtils.writeInfoToFile(this, db, "");
+            DicUtils.clearDbChange(this);
+        }
+
         if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
             backKeyPressedTime = System.currentTimeMillis();
             Toast.makeText(getApplicationContext(), "'뒤로'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
@@ -460,53 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-            //종료 시점에 변경 사항을 기록한다.
-            DicUtils.writeNewInfoToFile(this, db);
-
             finish();
         }
     }
-
 }
-
-class MainPagerAdapter extends FragmentPagerAdapter {
-    private final List<Fragment> mFragmentList = new ArrayList<>();
-    private final List<String> mFragmentTitleList = new ArrayList<>();
-
-    public MainPagerAdapter(FragmentManager fm, AppCompatActivity activity) {
-        super(fm);
-
-        mFragmentList.add(new VocabularyFragment());
-        mFragmentTitleList.add("단어장");
-
-        mFragmentList.add(new DictionaryFragment());
-        mFragmentTitleList.add("사전");
-
-        mFragmentList.add(new TodayFragment());
-        mFragmentTitleList.add("오늘의 단어");
-    }
-
-    @Override
-    public int getCount() {
-        return mFragmentList.size();
-    }
-
-    @Override
-    public Fragment getItem(int position) {
-        DicUtils.dicLog(this.getClass().toString() + " getItem" + " : " + position);
-        return mFragmentList.get(position);
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mFragmentTitleList.get(position);
-    }
-}
-
-
-/*
-//소프트 키보드 없애기
-   InputMethodManager imm= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-   imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
- */

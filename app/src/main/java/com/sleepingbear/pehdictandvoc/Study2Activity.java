@@ -35,8 +35,6 @@ import java.util.Random;
 public class Study2Activity extends AppCompatActivity implements View.OnClickListener {
     private String mVocKind;
     private String mMemorization;
-    private String mFromDate;
-    private String mToDate;
 
     private String mWordMean;
 
@@ -60,11 +58,9 @@ public class Study2Activity extends AppCompatActivity implements View.OnClickLis
         Bundle b = this.getIntent().getExtras();
         mVocKind = b.getString("vocKind");
         mMemorization = b.getString("memorization");
-        mFromDate = b.getString("fromDate");
-        mToDate = b.getString("toDate");
         mWordMean = "WORD";
 
-        ActionBar ab = (ActionBar) getSupportActionBar();
+        ActionBar ab = getSupportActionBar();
         ab.setTitle(b.getString("studyKindName"));
         ab.setHomeButtonEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
@@ -96,6 +92,10 @@ public class Study2Activity extends AppCompatActivity implements View.OnClickLis
         }
 
         getListView();
+
+        AdView av = (AdView)this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        av.loadAd(adRequest);
     }
 
     public void getListView() {
@@ -118,8 +118,6 @@ public class Study2Activity extends AppCompatActivity implements View.OnClickLis
         if (mMemorization.length() == 1) {
             sql.append("   AND A.MEMORIZATION = '" + mMemorization + "' " + CommConstants.sqlCR);
         }
-        sql.append("   AND A.INS_DATE >= '" + mFromDate + "' " + CommConstants.sqlCR);
-        sql.append("   AND A.INS_DATE <= '" + mToDate + "' " + CommConstants.sqlCR);
         sql.append(" ORDER BY A.RANDOM_SEQ" + CommConstants.sqlCR);
         Cursor cursor = db.rawQuery(sql.toString(), null);
         if ( cursor.getCount() == 0 ) {
@@ -234,7 +232,7 @@ public class Study2Activity extends AppCompatActivity implements View.OnClickLis
             finish();
         } else if (id == R.id.action_help) {
             Bundle bundle = new Bundle();
-            bundle.putString("SCREEN", "STUDY2");
+            bundle.putString("SCREEN", CommConstants.screen_study2);
 
             Intent intent = new Intent(getApplication(), HelpActivity.class);
             intent.putExtras(bundle);
@@ -256,6 +254,8 @@ class Study2Item  {
 }
 
 class Study2CursorAdapter extends CursorAdapter {
+    int fontSize = 0;
+
     private String mWordMean;
     private Activity mActivity;
     private SQLiteDatabase mDb;
@@ -290,6 +290,8 @@ class Study2CursorAdapter extends CursorAdapter {
         mWordMean = wordMean;
 
         mAnswerAl = answerAl;
+
+        fontSize = Integer.parseInt( DicUtils.getPreferencesValue( context, CommConstants.preferences_font ) );
     }
 
     @Override
@@ -459,19 +461,6 @@ class Study2CursorAdapter extends CursorAdapter {
             ((TextView) view.findViewById(R.id.my_c_s2i_tv_answer)).setText("");
         }
 
-        /*
-        DicUtils.dicLog("aaaa : " + cursor.getPosition() + "," + (mAnswerAl.get(cursor.getPosition()).chkAnswer == 1 ? true : false) + "," +
-                (mAnswerAl.get(cursor.getPosition()).chkAnswer == 2 ? true : false)  + "," +
-                (mAnswerAl.get(cursor.getPosition()).chkAnswer == 3 ? true : false)  + "," +
-                (mAnswerAl.get(cursor.getPosition()).chkAnswer == 4 ? true : false)  + ","  );
-
-        String logStr = "";
-        for ( int i = 0; i < mAnswerAl.size(); i++ ) {
-            logStr += mAnswerAl.get(i).chkAnswer + ", ";
-        }
-        DicUtils.dicLog("bindview : " + cursor.getPosition() + " -> " + logStr);
-        */
-
         //암기 체크박스
         String memorization = cursor.getString(cursor.getColumnIndexOrThrow("MEMORIZATION"));
         CheckBox cb_memorization = (CheckBox) view.findViewById(R.id.my_c_s2i_cb_memorization);
@@ -482,18 +471,11 @@ class Study2CursorAdapter extends CursorAdapter {
         }
 
         //UI 수정
-        if ( "WORD".equals(mWordMean) ) {
-            ((TextView)view.findViewById(R.id.my_c_s2i_tv_question)).setTextSize(15);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer1)).setTextSize(13);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer2)).setTextSize(13);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer3)).setTextSize(13);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer4)).setTextSize(13);
-        } else {
-            ((TextView)view.findViewById(R.id.my_c_s2i_tv_question)).setTextSize(13);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer1)).setTextSize(15);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer2)).setTextSize(15);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer3)).setTextSize(15);
-            ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer4)).setTextSize(15);
-        }
+        ((TextView)view.findViewById(R.id.my_c_s2i_tv_question)).setTextSize(fontSize);
+        ((TextView)view.findViewById(R.id.my_c_s2i_tv_answer)).setTextSize(fontSize);
+        ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer1)).setTextSize(fontSize);
+        ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer2)).setTextSize(fontSize);
+        ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer3)).setTextSize(fontSize);
+        ((RadioButton)view.findViewById(R.id.my_c_s2i_rb_answer4)).setTextSize(fontSize);
     }
 }

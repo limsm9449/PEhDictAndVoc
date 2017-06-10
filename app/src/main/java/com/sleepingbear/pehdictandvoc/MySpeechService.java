@@ -2,18 +2,14 @@ package com.sleepingbear.pehdictandvoc;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.TimerTask;
 
 public class MySpeechService extends Service implements TextToSpeech.OnInitListener {
 
@@ -72,12 +68,8 @@ public class MySpeechService extends Service implements TextToSpeech.OnInitListe
         if (status == TextToSpeech.SUCCESS) {
             int result = ttsEn.setLanguage(Locale.US);
             int result2 = ttsKr.setLanguage(Locale.KOREA);
-            if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED &&
-                    result2 != TextToSpeech.LANG_MISSING_DATA && result2 != TextToSpeech.LANG_NOT_SUPPORTED ) {
-                isInit = true;
-            } else {
-                isInit = false;
-            }
+            isInit = result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED &&
+                    result2 != TextToSpeech.LANG_MISSING_DATA && result2 != TextToSpeech.LANG_NOT_SUPPORTED;
 
             if ( isInit == true ) {
                 if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1 ){

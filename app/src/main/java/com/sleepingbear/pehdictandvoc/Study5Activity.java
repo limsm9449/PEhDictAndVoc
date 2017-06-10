@@ -16,8 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,8 +29,6 @@ import java.util.Random;
 public class Study5Activity extends AppCompatActivity implements View.OnClickListener {
     private String mVocKind;
     private String mMemorization;
-    private String mFromDate;
-    private String mToDate;
 
     private String mWordMean;
 
@@ -74,29 +70,27 @@ public class Study5Activity extends AppCompatActivity implements View.OnClickLis
         Bundle b = this.getIntent().getExtras();
         mVocKind = b.getString("vocKind");
         mMemorization = b.getString("memorization");
-        mFromDate = b.getString("fromDate");
-        mToDate = b.getString("toDate");
         mWordMean = "WORD";
 
-        ActionBar ab = (ActionBar) getSupportActionBar();
+        ActionBar ab = getSupportActionBar();
         ab.setTitle(b.getString("studyKindName"));
         ab.setHomeButtonEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        ((RadioButton) findViewById(R.id.my_a_study5_rb_all)).setOnClickListener(this);
-        ((RadioButton) findViewById(R.id.my_a_study5_rb_m)).setOnClickListener(this);
-        ((RadioButton) findViewById(R.id.my_a_study5_rb_m_not)).setOnClickListener(this);
-        ((RadioButton) findViewById(R.id.my_a_study5_rb_word)).setOnClickListener(this);
-        ((RadioButton) findViewById(R.id.my_a_study5_rb_mean)).setOnClickListener(this);
-        ((Button) findViewById(R.id.my_a_study5_b_random)).setOnClickListener(this);
-        ((Button) findViewById(R.id.my_a_study5_b_a1)).setOnClickListener(this);
-        ((Button) findViewById(R.id.my_a_study5_b_a2)).setOnClickListener(this);
-        ((Button) findViewById(R.id.my_a_study5_b_a3)).setOnClickListener(this);
-        ((Button) findViewById(R.id.my_a_study5_b_a4)).setOnClickListener(this);
-        ((ImageButton) findViewById(R.id.my_a_study5_ib_first)).setOnClickListener(this);
-        ((ImageButton) findViewById(R.id.my_a_study5_ib_prev)).setOnClickListener(this);
-        ((ImageButton) findViewById(R.id.my_a_study5_ib_next)).setOnClickListener(this);
-        ((ImageButton) findViewById(R.id.my_a_study5_ib_last)).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_rb_all).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_rb_m).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_rb_m_not).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_rb_word).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_rb_mean).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_b_random).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_b_a1).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_b_a2).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_b_a3).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_b_a4).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_ib_first).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_ib_prev).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_ib_next).setOnClickListener(this);
+        findViewById(R.id.my_a_study5_ib_last).setOnClickListener(this);
 
         tv_question = (TextView) findViewById(R.id.my_a_study5_tv_question);
         tv_question.setText("");
@@ -129,6 +123,14 @@ public class Study5Activity extends AppCompatActivity implements View.OnClickLis
             ((RadioButton) findViewById(R.id.my_a_study5_rb_m_not)).setChecked(true);
         }
 
+        int fontSize = Integer.parseInt( DicUtils.getPreferencesValue( this, CommConstants.preferences_font ) );
+        tv_answer1.setTextSize(fontSize);
+        tv_answer2.setTextSize(fontSize);
+        tv_answer3.setTextSize(fontSize);
+        tv_answer4.setTextSize(fontSize);
+        tv_o_cnt.setTextSize(fontSize);
+        tv_x_cnt.setTextSize(fontSize);
+
         sb = (SeekBar) findViewById(R.id.my_a_study5_sb);
         sb.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -152,6 +154,10 @@ public class Study5Activity extends AppCompatActivity implements View.OnClickLis
         );
 
         getListView();
+
+        AdView av = (AdView)this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        av.loadAd(adRequest);
     }
 
     public void getListView() {
@@ -175,8 +181,6 @@ public class Study5Activity extends AppCompatActivity implements View.OnClickLis
         if (mMemorization.length() == 1) {
             sql.append("   AND A.MEMORIZATION = '" + mMemorization + "' " + CommConstants.sqlCR);
         }
-        sql.append("   AND A.INS_DATE >= '" + mFromDate + "' " + CommConstants.sqlCR);
-        sql.append("   AND A.INS_DATE <= '" + mToDate + "' " + CommConstants.sqlCR);
         sql.append(" ORDER BY A.RANDOM_SEQ" + CommConstants.sqlCR);
         mCursor = db.rawQuery(sql.toString(), null);
         if ( mCursor.getCount() > 0 ) {
@@ -487,7 +491,7 @@ public class Study5Activity extends AppCompatActivity implements View.OnClickLis
             finish();
         } else if (id == R.id.action_help) {
             Bundle bundle = new Bundle();
-            bundle.putString("SCREEN", "STUDY5");
+            bundle.putString("SCREEN", CommConstants.screen_study5);
 
             Intent intent = new Intent(getApplication(), HelpActivity.class);
             intent.putExtras(bundle);
