@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">최고의 영어 사전(유료)</string>
+    <string name="app_name">최고의 영어사전(유료)</string>
 
     <!-- Activity -->
     <string name="title_activity_dictionary">사전</string>
