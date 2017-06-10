@@ -91,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_share) {
             Intent msg = new Intent(Intent.ACTION_SEND);
             msg.addCategory(Intent.CATEGORY_DEFAULT);
-            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영어학습 어플");
-            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어학습' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
+            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영어 사전 어플");
+            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어 사전' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
             msg.setType("text/plain");
             startActivity(Intent.createChooser(msg, "어플 공유"));
 

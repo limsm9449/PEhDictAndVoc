@@ -496,7 +496,7 @@ public class DicUtils {
 
                     Element category = findElementForTag(tbody_e.child(m), "td", 1);
 
-                    String categoryId = "W" + getUrlParamValue(category.child(0).attr("href"), "id").replace("\n", "");
+                    String categoryId = getUrlParamValue(category.child(0).attr("href"), "id").replace("\n", "");
                     String categoryName = category.text();
                     String wordCnt = findElementForTag(tbody_e.child(m), "td", 3).text();
                     String bookmarkCnt = findElementForTag(tbody_e.child(m), "td", 4).text();
@@ -504,7 +504,7 @@ public class DicUtils {
                     dicLog(codeGroup + " : " + categoryName + " : " + categoryId + " : " + categoryName + " : " + wordCnt + " : " + bookmarkCnt + " : " + updDate) ;
                     Cursor cursor = db.rawQuery(DicQuery.getDaumCategory(categoryId), null);
                     if (cursor.moveToNext()) {
-                        if ( categoryId.equals(cursor.getString(cursor.getColumnIndexOrThrow("CODE"))) && updDate.equals(cursor.getString(cursor.getColumnIndexOrThrow("UPD_DATE"))) ) {
+                        if ( categoryId.equals(cursor.getString(cursor.getColumnIndexOrThrow("CATEGORY_ID"))) && updDate.equals(cursor.getString(cursor.getColumnIndexOrThrow("UPD_DATE"))) ) {
                             isBreak = true;
                             break;
                         } else {

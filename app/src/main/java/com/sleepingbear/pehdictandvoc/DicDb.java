@@ -279,7 +279,7 @@ public class DicDb {
     public static void updDaumCategoryInfo(SQLiteDatabase db, String categoryId, String categoryName, String updDate, String bookmarkCnt) {
         StringBuffer sql = new StringBuffer();
         sql.append("UPDATE DAUM_CATEGORY " + CommConstants.sqlCR);
-        sql.append("SET    CODE_NAME = '" + categoryName + "'" + CommConstants.sqlCR);
+        sql.append("SET    CATEGORY_NAME = '" + categoryName + "'" + CommConstants.sqlCR);
         sql.append("       ,UPD_DATE = '" + updDate + "'" + CommConstants.sqlCR);
         sql.append("       ,BOOKMARK_CNT = '" + bookmarkCnt + "'" + CommConstants.sqlCR);
         sql.append("WHERE  CATEGORY_ID = '" + categoryId + "'" + CommConstants.sqlCR);
@@ -287,10 +287,10 @@ public class DicDb {
         db.execSQL(sql.toString());
     }
 
-    public static void insDaumCategoryInfo(SQLiteDatabase db, String kind, String categoryId, String categoryName, String updDate, String wCnt, String bookmarkCnt) {
+    public static void insDaumCategoryInfo(SQLiteDatabase db, String kind, String categoryId, String categoryName, String updDate, String wordCnt, String bookmarkCnt) {
         StringBuffer sql = new StringBuffer();
-        sql.append("INSERT INTO DAUM_CATEGORY(KIND, CATEGORY_ID, CATEGORY_NAME, UPD_DATE, W_CNT, BOOKMARK_CNT) " + CommConstants.sqlCR);
-        sql.append("VALUES ('" + kind + "','" + categoryId + "','" + categoryName + "','" + updDate + "'," + wCnt + "," + bookmarkCnt + ")" + CommConstants.sqlCR);
+        sql.append("INSERT INTO DAUM_CATEGORY(KIND, CATEGORY_ID, CATEGORY_NAME, UPD_DATE, WORD_CNT, BOOKMARK_CNT) " + CommConstants.sqlCR);
+        sql.append("VALUES ('" + kind + "','" + categoryId + "','" + categoryName + "','" + updDate + "'," + wordCnt + "," + bookmarkCnt + ")" + CommConstants.sqlCR);
         DicUtils.dicSqlLog(sql.toString());
         db.execSQL(sql.toString());
     }
