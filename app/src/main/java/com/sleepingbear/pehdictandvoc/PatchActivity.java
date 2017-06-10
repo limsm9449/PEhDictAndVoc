@@ -38,7 +38,8 @@ public class PatchActivity extends AppCompatActivity {
         patch.append("" + CommConstants.sqlCR);
 
         patch.append("* 패치 내역" + CommConstants.sqlCR);
-        patch.append("- 2017.05.01 : 영어 학습 어플 통합 개발" + CommConstants.sqlCR);
+        patch.append("- 사전에서 한글 검색시 단어체크 여부에 상관없이 한글 검색이 되도록 수정" + CommConstants.sqlCR);
+        patch.append("- 2017.06.01 : 영어 사전 어플 통합 개발" + CommConstants.sqlCR);
 
         ((TextView) this.findViewById(R.id.my_c_patch_tv1)).setText(patch.toString());
 

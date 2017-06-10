@@ -193,7 +193,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
                     sql.append("SELECT SEQ _id, WORD, MEAN, ENTRY_ID, SPELLING, HANMUN, KIND" + CommConstants.sqlCR);
                     sql.append("  FROM DIC" + CommConstants.sqlCR);
                     sql.append(" WHERE 1 = 1" + CommConstants.sqlCR);
-                    if (((CheckBox) findViewById(R.id.my_cb_word)).isChecked()) {
+                    if (((CheckBox) findViewById(R.id.my_cb_word)).isChecked() && !DicUtils.isHangule(searchText) ) {
                         sql.append("   AND SPELLING != ''" + CommConstants.sqlCR);
                     }
                     sql.append(" AND ( WORD LIKE '" + searchText + "%' OR WORD IN (SELECT WORD FROM DIC_TENSE WHERE WORD_TENSE = '" + searchText + "') )" + CommConstants.sqlCR);
