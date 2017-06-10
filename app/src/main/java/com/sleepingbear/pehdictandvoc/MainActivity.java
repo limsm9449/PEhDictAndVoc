@@ -19,9 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
@@ -77,10 +74,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.my_b_today).setOnClickListener(this);
         findViewById(R.id.my_b_voc).setOnClickListener(this);
         findViewById(R.id.my_b_voc_study).setOnClickListener(this);
-
-        AdView av = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     @Override
@@ -99,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent msg = new Intent(Intent.ACTION_SEND);
             msg.addCategory(Intent.CATEGORY_DEFAULT);
             msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영어학습 어플");
-            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어학습' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.ehdictandvoc ");
+            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어학습' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
             msg.setType("text/plain");
             startActivity(Intent.createChooser(msg, "어플 공유"));
 

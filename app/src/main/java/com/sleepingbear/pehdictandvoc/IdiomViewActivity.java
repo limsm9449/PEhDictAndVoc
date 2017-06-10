@@ -22,10 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -69,10 +65,6 @@ public class IdiomViewActivity extends AppCompatActivity implements TextToSpeech
         db = dbHelper.getWritableDatabase();
 
         getListView();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void getListView() {

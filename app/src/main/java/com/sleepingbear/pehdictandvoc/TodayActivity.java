@@ -19,9 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class TodayActivity extends AppCompatActivity {
     int fontSize = 0;
     private DbHelper dbHelper;
@@ -51,10 +48,6 @@ public class TodayActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         getListView();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void getListView() {

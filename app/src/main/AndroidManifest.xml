@@ -151,7 +151,7 @@
 
         <service android:name=".MySpeechService">
             <intent-filter>
-                <action android:name="com.sleepingbear.ehdictandvoc.MySpeechService" />
+                <action android:name="com.sleepingbear.pehdictandvoc.MySpeechService" />
             </intent-filter>
         </service>
 

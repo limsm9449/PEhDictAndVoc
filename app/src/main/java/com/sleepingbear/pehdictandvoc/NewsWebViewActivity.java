@@ -32,10 +32,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -235,12 +231,6 @@ public class NewsWebViewActivity extends AppCompatActivity implements View.OnCli
         webView.setWebViewClient(new NewsWebViewActivity.MyWebViewClient());
         webView.loadUrl(currUrl);
         DicUtils.dicLog("First : " + currUrl);
-
-        //registerForContextMenu(webView);
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
 

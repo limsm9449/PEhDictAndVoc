@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_study"
-    tools:context="com.sleepingbear.ehdictandvoc.StudyActivity">
+    tools:context="com.sleepingbear.pehdictandvoc.StudyActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -143,8 +143,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/my_f_stu_rl_3"
-            android:layout_above="@+id/adView">
+            android:layout_below="@+id/my_f_stu_rl_3">
 
             <Button
                 android:layout_width="wrap_content"
@@ -157,13 +156,5 @@
                 android:textColor="@color/textColorPrimary" />
         </RelativeLayout>
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id"
-            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 </RelativeLayout>

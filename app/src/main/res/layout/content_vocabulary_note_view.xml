@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.sleepingbear.ehdictandvoc.VocabularyNoteViewActivity"
+    tools:context="com.sleepingbear.pehdictandvoc.VocabularyNoteViewActivity"
     tools:showIn="@layout/activity_vocabulary_note_view">
 
     <LinearLayout
@@ -15,8 +15,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="left|top"
         android:layout_marginTop="5dp"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/adView">
+        android:layout_alignParentTop="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -161,14 +160,5 @@
             android:layout_above="@+id/my_a_cat_lv_category" />
 
     </LinearLayout>
-
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
-        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

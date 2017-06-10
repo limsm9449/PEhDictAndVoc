@@ -25,9 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class DictionaryHistoryActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DbHelper dbHelper;
@@ -68,10 +65,6 @@ public class DictionaryHistoryActivity extends AppCompatActivity implements View
 
         //리스트 내용 변경
         changeListView();
-
-        AdView av = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     @Override

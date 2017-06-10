@@ -26,10 +26,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -77,10 +73,6 @@ public class ConversationNoteViewActivity extends AppCompatActivity implements V
         db = dbHelper.getWritableDatabase();
 
         changeListView();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void changeListView() {

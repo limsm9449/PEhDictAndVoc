@@ -20,17 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -91,10 +82,6 @@ public class ConversationStudyActivity extends AppCompatActivity implements View
 
         //리스트 내용 변경
         changeListView(true);
-
-        AdView av = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     @Override
@@ -238,38 +225,6 @@ public class ConversationStudyActivity extends AppCompatActivity implements View
                     ((TextView) dialog_layout.findViewById(R.id.my_tv_han)).setText(my_tv_han.getText());
                     ((TextView) dialog_layout.findViewById(R.id.my_tv_foreign)).setText(my_tv_foreign.getText());
 
-                    // 광고 추가
-                    PublisherAdView mPublisherAdView = new PublisherAdView(this);
-                    mPublisherAdView.setAdSizes(new AdSize(300, 250));
-                    mPublisherAdView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-
-                    // Create an ad request.
-                    PublisherAdRequest.Builder publisherAdRequestBuilder = new PublisherAdRequest.Builder();
-                    ((RelativeLayout) dialog_layout.findViewById(R.id.my_rl_admob)).addView(mPublisherAdView);
-
-                    mPublisherAdView.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdLoaded() {
-                            super.onAdLoaded();
-
-                            ((Button) dialog_layout.findViewById(R.id.my_b_next)).setVisibility(View.VISIBLE);
-                            ((Button) dialog_layout.findViewById(R.id.my_b_close)).setVisibility(View.VISIBLE);
-                            ((Button) dialog_layout.findViewById(R.id.my_b_detail)).setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onAdFailedToLoad(int i) {
-                            super.onAdFailedToLoad(i);
-
-                            ((Button) dialog_layout.findViewById(R.id.my_b_next)).setVisibility(View.VISIBLE);
-                            ((Button) dialog_layout.findViewById(R.id.my_b_close)).setVisibility(View.VISIBLE);
-                            ((Button) dialog_layout.findViewById(R.id.my_b_detail)).setVisibility(View.VISIBLE);
-                        }
-                    });
-
-                    // Start loading the ad.
-                    mPublisherAdView.loadAd(publisherAdRequestBuilder.build());
-
                     ((Button) dialog_layout.findViewById(R.id.my_b_next)).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -304,10 +259,6 @@ public class ConversationStudyActivity extends AppCompatActivity implements View
                             alertDialog.dismiss();
                         }
                     });
-
-                    ((Button) dialog_layout.findViewById(R.id.my_b_next)).setVisibility(View.GONE);
-                    ((Button) dialog_layout.findViewById(R.id.my_b_close)).setVisibility(View.GONE);
-                    ((Button) dialog_layout.findViewById(R.id.my_b_detail)).setVisibility(View.GONE);
 
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.show();

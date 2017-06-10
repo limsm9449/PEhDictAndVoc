@@ -29,9 +29,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class VocabularyNoteViewActivity extends AppCompatActivity implements View.OnClickListener {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
@@ -101,10 +98,6 @@ public class VocabularyNoteViewActivity extends AppCompatActivity implements Vie
             }
         });
         spinner.setSelection(0);
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void getListView() {

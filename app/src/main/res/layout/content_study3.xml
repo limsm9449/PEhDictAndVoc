@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_study3"
-    tools:context="com.sleepingbear.ehdictandvoc.Study3Activity">
+    tools:context="com.sleepingbear.pehdictandvoc.Study3Activity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -151,8 +151,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout6"
-        android:layout_above="@+id/adView">
+        android:layout_below="@+id/linearLayout6">
 
         <LinearLayout
             android:orientation="vertical"
@@ -313,12 +312,4 @@
     </LinearLayout>
 
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
-        android:layout_alignParentBottom="true" />
 </RelativeLayout>

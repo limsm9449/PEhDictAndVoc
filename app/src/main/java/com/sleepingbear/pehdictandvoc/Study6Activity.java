@@ -26,10 +26,6 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -194,10 +190,6 @@ public class Study6Activity extends AppCompatActivity implements View.OnClickLis
             }
         };
         registerReceiver(screenOnOff, intentFilter);
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void getListView() {

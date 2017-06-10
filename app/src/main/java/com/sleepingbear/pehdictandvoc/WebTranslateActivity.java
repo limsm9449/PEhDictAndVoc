@@ -21,9 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class WebTranslateActivity extends AppCompatActivity {
     private ActionBar ab;
     private String site;
@@ -61,10 +58,6 @@ public class WebTranslateActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebTranslateActivity.MyWebViewClient());
 
         webTranslateLoad();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void webTranslateLoad() {

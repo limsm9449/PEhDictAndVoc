@@ -21,9 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class WebDictionaryActivity extends AppCompatActivity {
     private WebView webView;
     private String kind;
@@ -66,10 +63,6 @@ public class WebDictionaryActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebDictionaryActivity.MyWebViewClient());
 
         webDictionaryLoad();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void webDictionaryLoad() {

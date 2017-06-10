@@ -25,9 +25,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.ArrayList;
 
 public class DaumVocabularyViewActivity extends AppCompatActivity {
@@ -63,10 +60,6 @@ public class DaumVocabularyViewActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         getListView();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void getListView() {

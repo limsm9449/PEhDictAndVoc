@@ -29,10 +29,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -114,10 +110,6 @@ public class DaumVocabularyActivity extends AppCompatActivity {
         spinner.setSelection(3);
 
         changeListView();
-
-        AdView av = (AdView)this.findViewById(R.id.adView);
-        AdRequest adRequest = new  AdRequest.Builder().build();
-        av.loadAd(adRequest);
     }
 
     public void changeListView() {

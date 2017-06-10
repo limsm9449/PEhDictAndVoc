@@ -20,9 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class NaverConversationActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
@@ -50,11 +47,6 @@ public class NaverConversationActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         changeListView();
-
-        AdView av = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
-
     }
 
     @Override

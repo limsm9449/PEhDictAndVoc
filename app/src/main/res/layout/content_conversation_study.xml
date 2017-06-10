@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.sleepingbear.ehdictandvoc.ConversationStudyActivity"
+    tools:context="com.sleepingbear.pehdictandvoc.ConversationStudyActivity"
     tools:showIn="@layout/activity_conversation_study">
 
     <RelativeLayout
@@ -16,8 +16,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/adView">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -185,14 +184,14 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="5dp" />
 
-                    <com.sleepingbear.ehdictandvoc.FlowLayout
+                    <com.sleepingbear.pehdictandvoc.FlowLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/my_iv_right"
                         android:id="@+id/my_ll_conversation_word"
-                        android:layout_toRightOf="@+id/my_iv_left"></com.sleepingbear.ehdictandvoc.FlowLayout>
+                        android:layout_toRightOf="@+id/my_iv_left"></com.sleepingbear.pehdictandvoc.FlowLayout>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -208,14 +207,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.google.android.gms.ads.AdView
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id"
-            android:layout_alignParentBottom="true" />
+
 
     </RelativeLayout>
 

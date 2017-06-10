@@ -20,9 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 public class PatternActivity extends AppCompatActivity {
 
     private DbHelper dbHelper;
@@ -50,11 +47,6 @@ public class PatternActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         changeListView();
-
-        AdView av = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        av.loadAd(adRequest);
-
     }
 
     @Override
