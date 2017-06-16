@@ -22,9 +22,4 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_no_ad"
-        android:orderInCategory="100"
-        android:title="@string/action_no_ad"
-        app:showAsAction="never" />
 </menu>

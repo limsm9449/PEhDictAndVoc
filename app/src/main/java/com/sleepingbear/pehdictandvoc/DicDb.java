@@ -530,4 +530,52 @@ public class DicDb {
         db.execSQL(sql.toString());
     }
 
+    public static void delNovel(SQLiteDatabase db) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("DELETE FROM DIC_NOVEL" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+    }
+
+    public static void insNovel(SQLiteDatabase db, String kind, String title, String url) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("INSERT INTO DIC_NOVEL(KIND, TITLE, URL) " + CommConstants.sqlCR);
+        sql.append("VALUES ('" + kind + "','" + title.replaceAll("'", "") + "','" + url.replaceAll("'", "") + "')" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+    }
+
+    public static int getNovelCount(SQLiteDatabase db, String kind) {
+        int rtn = 0;
+        StringBuffer sql = new StringBuffer();
+        sql.append("SELECT COUNT(*) CNT  " + CommConstants.sqlCR);
+        sql.append("  FROM DIC_NOVEL " + CommConstants.sqlCR);
+        sql.append(" WHERE KIND = '" + kind + "'" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+
+        Cursor cursor = db.rawQuery(sql.toString(), null);
+        if ( cursor.moveToNext() ) {
+            rtn = cursor.getInt(cursor.getColumnIndexOrThrow("CNT"));
+        }
+        cursor.close();
+
+        return rtn;
+    }
+
+    public static void delMyNovel(SQLiteDatabase db, int seq) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("DELETE FROM DIC_MY_NOVEL " + CommConstants.sqlCR);
+        sql.append(" WHERE SEQ = " + seq + "" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+    }
+
+    public static void insMyNovel(SQLiteDatabase db, String title, String path) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("INSERT INTO DIC_MY_NOVEL (TITLE, PATH, INS_DATE)" + CommConstants.sqlCR);
+        sql.append("VALUES('" + title + "','" + path + "','" + DicUtils.getDelimiterDate(DicUtils.getCurrentDate(), ".") + "')" + CommConstants.sqlCR);
+        DicUtils.dicSqlLog(sql.toString());
+        db.execSQL(sql.toString());
+    }
+
 }

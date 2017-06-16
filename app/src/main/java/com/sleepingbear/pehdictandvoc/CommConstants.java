@@ -38,6 +38,9 @@ public class CommConstants {
         public static String screen_wordView = "SCREEN_WORD_VIEW";
         public static String screen_sentenceView = "SCREEN_SENTENCE_VIEW";
         public static String screen_today = "SCREEN_TODAY";
+        public static String screen_novel = "SCREEN_NOVEL";
+        public static String screen_novelView = "SCREEN_NOVEL_VIEW";
+        public static String screen_my_novel = "SCREEN_MY_NOVEL";
 
         public static String preferences_font = "key_fontSize";
 
@@ -59,6 +62,7 @@ public class CommConstants {
 
         public static String infoFileName = "ehdictandvoc.txt";
         public static String folderName = "/ehdictandvoc";
+        public static String novelFolderName = "/novel";
 
         //코드 등록
         public static String tag_code_ins = "C_CODE_INS" ;

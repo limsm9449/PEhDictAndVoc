@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -586,4 +587,120 @@ public class DicUtils {
 
         return wordAl;
     }
+
+    public static void getNovelList(SQLiteDatabase db, String url, String kind) {
+        try {
+            Document doc = getDocument(url);
+            Elements es = doc.select("li a");
+
+            if ( DicDb.getNovelCount(db, kind) != es.size() ) {
+                DicDb.delNovel(db);
+
+                for (int m = 0; m < es.size(); m++) {
+                    DicDb.insNovel(db, kind, es.get(m).text(), es.get(m).attr("href"));
+                }
+            }
+        } catch ( Exception e ) {
+            Log.d(CommConstants.tag, e.getMessage());
+        }
+    }
+
+    public static int getNovelPartCount(String url) {
+        int partSize = 0;
+        try {
+            Document doc = getDocument(url);
+            Elements es = doc.select("li a");
+            partSize = es.size();
+        } catch ( Exception e ) {
+            Log.d(CommConstants.tag, e.getMessage());
+        }
+
+        return partSize;
+    }
+
+    public static String getNovelContent(String url) {
+        String rtn = "";
+        try {
+            Document doc = getDocument(url);
+            Elements contents = doc.select("td font");
+            rtn = contents.get(1).html().replaceAll("<br /> <br />", "\n").replaceAll("&quot;","\"").replaceAll("<br />","");
+        } catch ( Exception e ) {
+            Log.d(CommConstants.tag, e.getMessage());
+        }
+
+        return rtn;
+    }
+
+    public static File getFIle(String folderName, String fileName) {
+        File appDir = new File(Environment.getExternalStorageDirectory().getAbsoluteFile() + folderName);
+        if (!appDir.exists()) {
+            appDir.mkdirs();
+        }
+        File saveFile = new File(Environment.getExternalStorageDirectory().getAbsoluteFile() + folderName + "/" + fileName);
+
+        return saveFile;
+    }
+
+    public static String getHtmlString(String contents) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<!doctype html>");
+        sb.append("<html>");
+        sb.append("<head>");
+        sb.append("</head>");
+        sb.append("<script src='https://code.jquery.com/jquery-1.11.3.js'></script>");
+        sb.append("<script>");
+        sb.append("$( document ).ready(function() {");
+        sb.append("    $('#contents').html(function(index, oldHtml) {");
+        sb.append("        return oldHtml.replace(/<[^>]*>/g, '').replace(/(<br>)/g, '\\n').replace(/\\b(\\w+?)\\b/g,'<span class=\"word\">$1</span>').replace(/\\n/g, '<br>')");
+        sb.append("    });");
+        sb.append("    $('.word').click(function(event) {");
+        sb.append("        window.android.setWord(event.target.innerHTML)");
+        sb.append("    });");
+        sb.append("});");
+        sb.append("</script>");
+
+        sb.append("<body>");
+        sb.append("<div id='contents'>");
+        sb.append(contents);
+        sb.append("</body>");
+        sb.append("</html>");
+
+        return sb.toString();
+    }
+
+    public static String getMyNovelContent(String path) {
+        String content = "";
+        try {
+            FileInputStream fis = new FileInputStream(new File(path));
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
+
+            String temp = "";
+            while( (temp = br.readLine()) != null) {
+                content += temp + "\n";
+            }
+
+            try {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                isr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        }
+
+        return content;
+    }
+
 }

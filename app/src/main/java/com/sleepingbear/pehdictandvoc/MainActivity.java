@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.my_b_web_dic).setOnClickListener(this);
 
         findViewById(R.id.my_b_news).setOnClickListener(this);
+        findViewById(R.id.my_b_novel).setOnClickListener(this);
         findViewById(R.id.my_b_news_word).setOnClickListener(this);
 
         findViewById(R.id.my_b_conversation_study).setOnClickListener(this);
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_share) {
             Intent msg = new Intent(Intent.ACTION_SEND);
             msg.addCategory(Intent.CATEGORY_DEFAULT);
-            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영어 사전 어플");
-            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영어 사전' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
+            msg.putExtra(Intent.EXTRA_SUBJECT, "최고의 영한 사전 어플");
+            msg.putExtra(Intent.EXTRA_TEXT, "영어.. 참 어렵죠? '최고의 영한 사전' 어플을 사용해 보세요. https://play.google.com/store/apps/details?id=com.sleepingbear.pehdictandvoc ");
             msg.setType("text/plain");
             startActivity(Intent.createChooser(msg, "어플 공유"));
 
@@ -112,8 +113,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(getApplication(), SettingsActivity.class));
 
             return true;
-        } else if (id == R.id.action_no_ad) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.sleepingbear.pehdictandvoc")));
         }
 
         return super.onOptionsItemSelected(item);
@@ -154,6 +153,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent newsIntent = new Intent(getApplication(), NewsActivity.class);
                 newsIntent.putExtras(bundle);
                 startActivity(newsIntent);
+
+                break;
+            case R.id.my_b_novel:
+                Intent novelIntent = new Intent(getApplication(), MyNovelActivity.class);
+                novelIntent.putExtras(bundle);
+                startActivity(novelIntent);
 
                 break;
             case R.id.my_b_news_word:

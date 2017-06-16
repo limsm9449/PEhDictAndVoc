@@ -70,6 +70,63 @@
         <item>예제</item>
     </string-array>
 
+    <string-array name="novel">
+        <item>A - Ago</item>
+        <item>Agr - And</item>
+        <item>And - Atl</item>
+        <item>Atl - Bar</item>
+        <item>Bar - Bir</item>
+        <item>Bir - Boy</item>
+        <item>Boy - Can</item>
+        <item>Can - Chi</item>
+        <item>Chi - Com</item>
+        <item>Com - Con</item>
+        <item>Con - Cul</item>
+        <item>Cum - Dia</item>
+        <item>Dia - Dra</item>
+        <item>Dra - Eng</item>
+        <item>Eng - Exp</item>
+        <item>Exp - Fir</item>
+        <item>Fir - Fri</item>
+        <item>Fri - Gin</item>
+        <item>Gio - Gui</item>
+        <item>Gui - Hil</item>
+        <item>Hil - His</item>
+        <item>His - In</item>
+        <item>In - Jac</item>
+        <item>Jac - Kin</item>
+        <item>Kin - Le</item>
+        <item>Le - Lif</item>
+        <item>Lif - Liz</item>
+        <item>Liz - Mai</item>
+        <item>Mai - Mat</item>
+        <item>Mat - Mem</item>
+        <item>Mem - Mir</item>
+        <item>Mir - Mis</item>
+        <item>Mis - My</item>
+        <item>My - Nor</item>
+        <item>Nor - On</item>
+        <item>On - Par</item>
+        <item>Par - Pic</item>
+        <item>Pic - Pop</item>
+        <item>Pop - Pun</item>
+        <item>Pun - Que</item>
+        <item>Que - Rep</item>
+        <item>Rep - Rou</item>
+        <item>Rou - Sci</item>
+        <item>Sci - She</item>
+        <item>Shi - Sop</item>
+        <item>Sor - Str</item>
+        <item>Str - Tex</item>
+        <item>THA - tou</item>
+        <item>Tou - Unb</item>
+        <item>Unb - Vel</item>
+        <item>Ven - Way</item>
+        <item>Way - Wom</item>
+        <item>Wom - Zep</item>
+        <item>Zib - Zul</item>
+    </string-array>
+
     <string-array name="webTranslate">
         <item>Naver</item>
         <item>Google</item>

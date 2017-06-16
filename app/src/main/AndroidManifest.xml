@@ -167,6 +167,18 @@
             android:name=".TodayActivity"
             android:label="@string/title_activity_today"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NovelActivity"
+            android:label="@string/title_activity_novel"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NovelViewActivity"
+            android:label="@string/title_activity_novel_view"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MyNovelActivity"
+            android:label="@string/title_activity_my_novel"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

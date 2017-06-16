@@ -41,7 +41,7 @@ public class HelpActivity extends AppCompatActivity {
         }
 
         tempSb.delete(0, tempSb.length());
-        tempSb.append("* 영어 사전" + CommConstants.sqlCR);
+        tempSb.append("* 영한 사전" + CommConstants.sqlCR);
         tempSb.append("- 단어, 예문을 검색합니다." + CommConstants.sqlCR);
         tempSb.append(" .단어를 클릭하시면 단어 상세, 예문을 클릭하시면 예문 상세를 보실 수 있습니다." + CommConstants.sqlCR);
         tempSb.append(" .단어를 길게 클릭하시면 웹사전 검색, 단어장에 추가할 수 있고, 예문을 길게 클릭하시면 회화노트에 등록 및 TTS를 들을 수 있습니다." + CommConstants.sqlCR);
@@ -55,7 +55,7 @@ public class HelpActivity extends AppCompatActivity {
 
         tempSb.delete(0, tempSb.length());
         tempSb.append("* 사전 검색 History" + CommConstants.sqlCR);
-        tempSb.append("- 영어 사전에서 검색한 단어를 조회합니다." + CommConstants.sqlCR);
+        tempSb.append("- 영한 사전에서 검색한 단어를 조회합니다." + CommConstants.sqlCR);
         tempSb.append(" .단어를 클릭하시면 영한 사전으로 이동합니다." + CommConstants.sqlCR);
         tempSb.append(" .상단의 편집버튼(연필모양)을 클릭해서 검색 단어를 삭제하실 수 있습니다." + CommConstants.sqlCR);
         tempSb.append("" + CommConstants.sqlCR);
@@ -113,7 +113,48 @@ public class HelpActivity extends AppCompatActivity {
         }
 
         tempSb.delete(0, tempSb.length());
-        tempSb.append("* 뉴스 클릭 단어" + CommConstants.sqlCR);
+        tempSb.append("* 영어 소설" + CommConstants.sqlCR);
+        tempSb.append("- 내가 등록한 영문 소설 리스트 입니다." + CommConstants.sqlCR);
+        tempSb.append(" .상단 '연필' 버튼을 클릭해서 리스트를 삭제할 수 있습니다.." + CommConstants.sqlCR);
+        tempSb.append(" .하단 '+' 버튼을 클릭해서 웹에 있는 영문 소설을 검색해서 추가할 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .하단 '+' 버튼을 길게 클릭해서 로컬에 있는 영문 소설을 추가할 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append("" + CommConstants.sqlCR);
+        if ( screen.equals(CommConstants.screen_my_novel) ) {
+            CurrentSb.append(tempSb.toString());
+        } else {
+            allSb.append(tempSb.toString());
+        }
+
+        tempSb.delete(0, tempSb.length());
+        tempSb.append("* 영어 소설 검색" + CommConstants.sqlCR);
+        tempSb.append("- 1000권 정도의 영문소설을 선택해서 읽을 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .상단 콤보에서 제목에 대한 선택 범위를 선택하고, 하단에서 소설을 선택합니다." + CommConstants.sqlCR);
+        tempSb.append("" + CommConstants.sqlCR);
+        if ( screen.equals(CommConstants.screen_novel) ) {
+            CurrentSb.append(tempSb.toString());
+        } else {
+            allSb.append(tempSb.toString());
+        }
+
+        tempSb.delete(0, tempSb.length());
+        tempSb.append("* 영어 소설 상세" + CommConstants.sqlCR);
+        tempSb.append("- 영어 소설을 보면서 필요한 단어를 검색할 수 있는 기능이 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .소설을 보다가 모르는 단어를 클릭을 하면 하단에 클릭한 단어의 뜻이 보입니다. " + CommConstants.sqlCR);
+        tempSb.append(" .클릭단어의 뜻이 없을경우 하단 오른쪽의 검색 버튼을 클릭하면 Naver,Daum에서 단어 검색을 할 수 있습니다. " + CommConstants.sqlCR);
+        tempSb.append(" .하단 단어를 길게 클릭하시면 단어 상세를 보실 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .하단 단어 옆의 (+)를 클릭하시면 바로 단어장에 등록을 하실 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .소설을 단어를 길게 클릭하시면 단어보기, 단어검색(Naver,Daum), 번역, 문장보기, TTS, 전체TTS(4000자까지), 복사, 전체복사 기능을 사용하실 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .소설을 보면서 클릭한 단어는 '뉴스 클릭 단어' 화면에서 확인하실 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append("" + CommConstants.sqlCR);
+        if ( screen.equals(CommConstants.screen_novelView) ) {
+            CurrentSb.append(tempSb.toString());
+        } else {
+            allSb.append(tempSb.toString());
+        }
+
+
+        tempSb.delete(0, tempSb.length());
+        tempSb.append("* 뉴스/소설 클릭 단어" + CommConstants.sqlCR);
         tempSb.append("- 영어 뉴스를 보면서 클릭한 단어들에 대하여 관리하는 화면입니다." + CommConstants.sqlCR);
         tempSb.append(" .상단 수정 버튼(연필모양)를 클릭하시면 단어를 선택, 삭제, 단어장에 저장, 신규 단어장에 저장할 수 있습니다." + CommConstants.sqlCR);
         tempSb.append(" .단어를 클릭하시면 단어상세를 보실 수 있습니다." + CommConstants.sqlCR);

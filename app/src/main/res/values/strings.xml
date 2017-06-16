@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">최고의 영어사전(유료)</string>
+    <string name="app_name">최고의 영한사전(유료)</string>
 
     <!-- Activity -->
     <string name="title_activity_dictionary">사전</string>
@@ -37,6 +37,9 @@
     <string name="title_activity_idiom">숙어</string>
     <string name="title_activity_idiom_view">숙어 예제</string>
     <string name="title_activity_today">오늘의 단어</string>
+    <string name="title_activity_novel">영어소설 검색</string>
+    <string name="title_activity_novel_view">영어소설</string>
+    <string name="title_activity_my_novel">영어소설</string>
 
 
     <!-- action -->
