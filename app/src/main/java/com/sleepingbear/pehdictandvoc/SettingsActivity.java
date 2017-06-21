@@ -215,6 +215,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             startActivity(intent);
         } else if ( preference.getKey().equals("key_review") ) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+        } else if ( preference.getKey().equals("key_apps") ) {
+            String url ="http://blog.naver.com/limsm9449/221031416154";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
         }
 
         return false;
