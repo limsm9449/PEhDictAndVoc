@@ -30,6 +30,9 @@ public class DicQuery {
         sql.append("UNION" + CommConstants.sqlCR);
         sql.append("SELECT '" + CommConstants.tag_click_word_ins + "'||':'||ENTRY_ID||':'||INS_DATE WRITE_DATA " + CommConstants.sqlCR);
         sql.append(" FROM DIC_CLICK_WORD" + CommConstants.sqlCR);
+        sql.append("UNION" + CommConstants.sqlCR);
+        sql.append("SELECT '" + CommConstants.tag_novel_ins + "'||':'||TITLE||':'||PATH||':'||INS_DATE||':'||FAVORITE_FLAG WRITE_DATA " + CommConstants.sqlCR);
+        sql.append(" FROM DIC_MY_NOVEL" + CommConstants.sqlCR);
 
         DicUtils.dicSqlLog(sql.toString());
 
@@ -700,6 +703,16 @@ public class DicQuery {
         sql.append("SELECT SEQ _id, SEQ, TITLE, PATH, INS_DATE" + CommConstants.sqlCR);
         sql.append("FROM   DIC_MY_NOVEL" + CommConstants.sqlCR);
         sql.append("ORDER  BY INS_DATE DESC" + CommConstants.sqlCR);
+
+        DicUtils.dicSqlLog(sql.toString());
+
+        return sql.toString();
+    }
+
+    public static String getMyNovelMessage() {
+        StringBuffer sql = new StringBuffer();
+
+        sql.append("SELECT -1 _id, -1 SEQ, '등록된 소설이 없습니다.' TITLE, '하단의 ''+''를 클릭해서 영문소설을 등록하세요.' PATH, '' INS_DATE" + CommConstants.sqlCR);
 
         DicUtils.dicSqlLog(sql.toString());
 

@@ -116,8 +116,8 @@ public class HelpActivity extends AppCompatActivity {
         tempSb.append("* 영어 소설" + CommConstants.sqlCR);
         tempSb.append("- 내가 등록한 영문 소설 리스트 입니다." + CommConstants.sqlCR);
         tempSb.append(" .상단 '연필' 버튼을 클릭해서 리스트를 삭제할 수 있습니다.." + CommConstants.sqlCR);
-        tempSb.append(" .하단 '+' 버튼을 클릭해서 웹에 있는 영문 소설을 검색해서 추가할 수 있습니다." + CommConstants.sqlCR);
-        tempSb.append(" .하단 '+' 버튼을 길게 클릭해서 로컬에 있는 영문 소설을 추가할 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .하단 '+' 버튼을 클릭해서 웹에 있는 영문 소설을 검색해서 추가하거나 로컬에 있는 문서를 등록 할 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .리스트에서 소설을 길게 클릭하시면 메인화면에 즐겨찾시 소설로 등록할 수 있습니다." + CommConstants.sqlCR);
         tempSb.append("" + CommConstants.sqlCR);
         if ( screen.equals(CommConstants.screen_my_novel) ) {
             CurrentSb.append(tempSb.toString());
@@ -127,7 +127,8 @@ public class HelpActivity extends AppCompatActivity {
 
         tempSb.delete(0, tempSb.length());
         tempSb.append("* 영어 소설 검색" + CommConstants.sqlCR);
-        tempSb.append("- 1000권 정도의 영문소설을 선택해서 읽을 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append("- 카테고리 별로 소설 리스트를 볼수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .소설 검색은 '영어 소설 사이트' 화면을 통해서 해당 사이트로 이동후에 검색을 해주세요." + CommConstants.sqlCR);
         tempSb.append(" .상단 콤보에서 제목에 대한 선택 범위를 선택하고, 하단에서 소설을 선택합니다." + CommConstants.sqlCR);
         tempSb.append("" + CommConstants.sqlCR);
         if ( screen.equals(CommConstants.screen_novel) ) {
@@ -151,7 +152,6 @@ public class HelpActivity extends AppCompatActivity {
         } else {
             allSb.append(tempSb.toString());
         }
-
 
         tempSb.delete(0, tempSb.length());
         tempSb.append("* 뉴스/소설 클릭 단어" + CommConstants.sqlCR);

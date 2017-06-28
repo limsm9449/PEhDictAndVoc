@@ -1,16 +1,19 @@
 package com.sleepingbear.pehdictandvoc;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -41,8 +44,9 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
     private int s_idx = 0;
     private String novelTitle = "";
     private String novelUrl = "";
-    private String novelPart = "";
-    private int mSelect = 0;
+    private String site = "";
+    private int siteIdx = 0;
+    private Cursor cursor;
 
     NovelTask task;
     private String taskKind = "NOVEL_LIST";
@@ -62,12 +66,23 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
         ab.setHomeButtonEnabled(true);
         ab.setDisplayHomeAsUpEnabled(true);
 
+        Bundle b = getIntent().getExtras();
+        site = b.getString("SITE");
+        siteIdx = b.getInt("SITE_IDX");
+
         fontSize = Integer.parseInt( DicUtils.getPreferencesValue( this, CommConstants.preferences_font ) );
 
         dbHelper = new DbHelper(this);
         db = dbHelper.getWritableDatabase();
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.novel, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = null;
+        if ( site.equals(CommConstants.novel_fullbooks) ) {
+            adapter = ArrayAdapter.createFromResource(this, R.array.novel0, android.R.layout.simple_spinner_item);
+        } else if ( site.equals(CommConstants.novel_classicreader) ) {
+            adapter = ArrayAdapter.createFromResource(this, R.array.novel1, android.R.layout.simple_spinner_item);
+        } else if ( site.equals(CommConstants.novel_loyalbooks) ) {
+            adapter = ArrayAdapter.createFromResource(this, R.array.novel2, android.R.layout.simple_spinner_item);
+        }
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         s_novel = (Spinner) findViewById(R.id.my_s_novel);
         s_novel.setAdapter(adapter);
@@ -77,22 +92,20 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
                                        int position, long id) {
                 s_idx = parent.getSelectedItemPosition();
 
-                task = new NovelTask();
-                task.execute();
+                changeListView();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-
         s_novel.setSelection(0);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // 상단 메뉴 구성
-        getMenuInflater().inflate(R.menu.menu_help, menu);
+        getMenuInflater().inflate(R.menu.menu_novel, menu);
 
         return true;
     }
@@ -103,6 +116,11 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
 
         if (id == android.R.id.home) {
             finish();
+        } else if (id == R.id.action_refresh) {
+            taskKind = "NOVEL_LIST";
+
+            task = new NovelTask();
+            task.execute();
         } else if (id == R.id.action_help) {
             Bundle bundle = new Bundle();
             bundle.putString("SCREEN", CommConstants.screen_novel);
@@ -116,91 +134,89 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void changeListView() {
-        Cursor listCursor = db.rawQuery(DicQuery.getNovelList("C" + s_idx), null);
-        ListView listView = (ListView) findViewById(R.id.my_lv);
-        adapter = new NovelCursorAdapter(this, listCursor, 0);
-        listView.setAdapter(adapter);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listView.setOnItemClickListener(itemClickListener);
-        listView.setSelection(0);
+        cursor = db.rawQuery(DicQuery.getNovelList("S" + siteIdx + "_" + s_idx), null);
+        if ( cursor.getCount() == 0 ) {
+            task = new NovelTask();
+            task.execute();
+        } else {
+            ListView listView = (ListView) findViewById(R.id.my_lv);
+            adapter = new NovelCursorAdapter(this, cursor, 0);
+            listView.setAdapter(adapter);
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            listView.setOnItemClickListener(itemClickListener);
+            listView.setSelection(0);
+        }
     }
 
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Cursor cur = (Cursor) adapter.getItem(position);
+            final int pos = position;
+            new AlertDialog.Builder(NovelActivity.this)
+                    .setTitle("알림")
+                    .setMessage("영문소설을 다운로드 하시겠습니까?")
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Cursor cur = (Cursor) adapter.getItem(pos);
 
-            novelTitle = cur.getString(cur.getColumnIndexOrThrow("TITLE"));
-            novelUrl = cur.getString(cur.getColumnIndexOrThrow("URL"));
+                            novelTitle = cur.getString(cur.getColumnIndexOrThrow("TITLE"));
+                            novelUrl = cur.getString(cur.getColumnIndexOrThrow("URL"));
 
-            novelPart = "";
-
-            taskKind = "NOVEL_PART";
-            task = new NovelTask();
-            task.execute();
+                            taskKind = "NOVEL_CONTENT";
+                            task = new NovelTask();
+                            task.execute();
+                        }
+                    })
+                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
         }
     };
 
-    public void showPart(int novelPartCount) {
-        final int[] kindCodes = new int[novelPartCount];
-        final String[] kindCodeNames = new String[novelPartCount];
-
-        int idx = 0;
-        for (int i = 0; i < novelPartCount; i++) {
-            kindCodes[idx] = i;
-            kindCodeNames[idx] = "Part " + (i + 1);
-            idx++;
+    public void saveContent(String novelContent, int Part) {
+        File file = null;
+        if ( site.equals(CommConstants.novel_fullbooks) ) {
+            file = DicUtils.getFIle(CommConstants.folderName + CommConstants.novelFolderName, novelUrl.split("[.]")[0] + Part + ".txt");
+        } else if ( site.equals(CommConstants.novel_classicreader)) {
+            file = DicUtils.getFIle(CommConstants.folderName + CommConstants.novelFolderName, novelUrl.split("[/]")[2] + ".txt");
+        } else if ( site.equals(CommConstants.novel_loyalbooks)) {
+            file = DicUtils.getFIle(CommConstants.folderName + CommConstants.novelFolderName, novelUrl.split("[/]")[2] + ".txt");
         }
 
-        final android.support.v7.app.AlertDialog.Builder dlg = new android.support.v7.app.AlertDialog.Builder(NovelActivity.this);
-        dlg.setTitle("메뉴 선택");
-        dlg.setSingleChoiceItems(kindCodeNames, mSelect, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                mSelect = arg1;
-            }
-        });
-        dlg.setNegativeButton("취소", null);
-        dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                taskKind = "NOVEL_CONTENT";
-                novelPart = "" + (mSelect + 1);
-                task = new NovelTask();
-                task.execute();
-            }
-        });
-        dlg.show();
-    }
-
-    public void saveContent(String novelContent) {
-        File file = DicUtils.getFIle(CommConstants.folderName + CommConstants.novelFolderName, novelUrl.split("[.]")[0] + novelPart + ".txt" );
-        if ( !file.exists() ) {
+        try {
             FileOutputStream fos = null;
-
-            try {
-                file.createNewFile();
-                fos = new FileOutputStream(file);
-                fos.write((novelContent.getBytes()));
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-            }
+            file.createNewFile();
+            fos = new FileOutputStream(file);
+            fos.write((novelContent.getBytes()));
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
         }
 
-        String path = Environment.getExternalStorageDirectory().getAbsoluteFile() + CommConstants.folderName + CommConstants.novelFolderName + "/" + novelUrl.split("[.]")[0] + novelPart + ".txt";
-
-        if ( !"".equals(novelPart) ) {
-            novelTitle = novelTitle + " Part " + novelPart;
+        String path = "";
+        if ( site.equals(CommConstants.novel_fullbooks) ) {
+            path = Environment.getExternalStorageDirectory().getAbsoluteFile() + CommConstants.folderName + CommConstants.novelFolderName + "/" + novelUrl.split("[.]")[0] + Part + ".txt";
+        } else if ( site.equals(CommConstants.novel_classicreader) ) {
+            path = Environment.getExternalStorageDirectory().getAbsoluteFile() + CommConstants.folderName + CommConstants.novelFolderName + "/" + novelUrl.split("[/]")[2] + ".txt";
+        } else if ( site.equals(CommConstants.novel_loyalbooks) ) {
+            path = Environment.getExternalStorageDirectory().getAbsoluteFile() + CommConstants.folderName + CommConstants.novelFolderName + "/" + novelUrl.split("[/]")[2] + ".txt";
         }
-        DicDb.insMyNovel(db, novelTitle, path);
+        if ( Part > 0 ) {
+            DicDb.insMyNovel(db, novelTitle.replaceAll("['\"]","`") + " Part " + Part, path);
+        } else {
+            DicDb.insMyNovel(db, novelTitle.replaceAll("['\"]","`"), path);
+        }
 
-        Intent resultIntent = new Intent();
-        setResult(Activity.RESULT_OK, resultIntent);
-
-        finish();
+        //페이지 초기화
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(novelTitle + "_PAGE", 0);
+        editor.commit();
     }
 
     @Override
@@ -210,7 +226,7 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
     private class NovelTask extends AsyncTask<Void, Void, Void> {
         private ProgressDialog pd;
         private int novelPartCount = 0;
-        private String novelContent;
+        private String novelContent = "";
 
         @Override
         protected void onPreExecute() {
@@ -229,16 +245,54 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected Void doInBackground(Void... arg0) {
             if ( taskKind.equals("NOVEL_LIST") ) {
-                DicUtils.getNovelList(db, "http://www.fullbooks.com/idx" + (s_idx + 1) + ".html", "C" + s_idx);
-            } else if ( taskKind.equals("NOVEL_PART") ) {
-                novelPartCount = DicUtils.getNovelPartCount("http://www.fullbooks.com/" + novelUrl);
-                if ( novelPartCount == 0 ) {
-                    taskKind = "NOVEL_CONTENT";
-                    novelContent = DicUtils.getNovelContent("http://www.fullbooks.com/" + novelUrl);
+                if ( site.equals(CommConstants.novel_fullbooks) ) {
+                    DicUtils.getNovelList0(db, "http://www.fullbooks.com/idx" + (s_idx + 1) + ".html", "S" + siteIdx + "_" + s_idx);
+                } else if ( site.equals(CommConstants.novel_classicreader) ) {
+                    String[] novelCategory = getResources().getStringArray(R.array.novel1);
+                    String arrValue = novelCategory[s_idx];
+                    DicUtils.getNovelList1(db, "http://www.classicreader.com/list/titles/" + arrValue, "S" + siteIdx + "_" + s_idx);
+                } else if ( site.equals(CommConstants.novel_loyalbooks) ) {
+                    String[] novelCategory = getResources().getStringArray(R.array.novel2);
+                    String arrValue = novelCategory[s_idx];
+                    DicUtils.getNovelList2(db, "http://www.loyalbooks.com/genre/" + arrValue.replaceAll("[ ]","_"), "S" + siteIdx + "_" + s_idx);
                 }
             } else if ( taskKind.equals("NOVEL_CONTENT") ) {
-                String[] fileNameSplit = novelUrl.split("[.]");
-                novelContent = DicUtils.getNovelContent("http://www.fullbooks.com/" + fileNameSplit[0] + novelPart + "." + fileNameSplit[1]);
+                novelContent = "";
+
+                if ( site.equals(CommConstants.novel_fullbooks) ) {
+                    novelPartCount = DicUtils.getNovelPartCount0("http://www.fullbooks.com/" + novelUrl);
+
+                    if ( novelPartCount == 0 ) {
+                        novelContent = DicUtils.getNovelContent0("http://www.fullbooks.com/" + novelUrl);
+                        DicUtils.dicLog(" contents size : " + novelContent.length());
+                        saveContent(novelContent, 0);
+                    } else {
+                        for (int i = 1; i <= novelPartCount; i++) {
+                            String[] fileNameSplit = novelUrl.split("[.]");
+                            novelContent += DicUtils.getNovelContent0("http://www.fullbooks.com/" + fileNameSplit[0] + i + "." + fileNameSplit[1]) + "\n\n\n";
+                            DicUtils.dicLog(" contents size : " + novelContent.length());
+                        }
+                        saveContent(novelContent, 0);
+                    }
+                } else if ( site.equals(CommConstants.novel_classicreader) ) {
+                    novelPartCount = DicUtils.getNovelPartCount1("http://www.classicreader.com" + novelUrl);
+
+                    if ( novelPartCount == 0 ) {
+                        novelContent = DicUtils.getNovelContent1("http://www.classicreader.com" + novelUrl + 1);
+                        DicUtils.dicLog(" contents size : " + novelContent.length());
+                        saveContent(novelContent, 0);
+                    } else {
+                        for (int i = 1; i <= novelPartCount; i++) {
+                            novelContent += DicUtils.getNovelContent1("http://www.classicreader.com" + novelUrl + i) + "\n\n\n";
+                            DicUtils.dicLog(" contents size : " + novelContent.length());
+                        }
+                        saveContent(novelContent, 0);
+                    }
+                } else if ( site.equals(CommConstants.novel_loyalbooks) ) {
+                    novelContent = DicUtils.getNovelContent2("http://www.loyalbooks.com" + novelUrl);
+                    DicUtils.dicLog(" contents size : " + novelContent.length());
+                    saveContent(novelContent, 0);
+                }
             }
             return null;
         }
@@ -250,10 +304,11 @@ public class NovelActivity extends AppCompatActivity implements View.OnClickList
 
             if ( taskKind.equals("NOVEL_LIST") ) {
                 changeListView();
-            } else if ( taskKind.equals("NOVEL_PART") ) {
-                showPart(novelPartCount);
             } else if ( taskKind.equals("NOVEL_CONTENT") ) {
-                saveContent(novelContent);
+                Intent resultIntent = new Intent();
+                setResult(Activity.RESULT_OK, resultIntent);
+
+                finish();
             }
 
             super.onPostExecute(result);
@@ -288,4 +343,6 @@ class NovelCursorAdapter extends CursorAdapter {
     }
 
 }
+
+
 
