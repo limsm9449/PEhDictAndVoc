@@ -44,7 +44,7 @@ public class HelpActivity extends AppCompatActivity {
         tempSb.append("* 영한 사전" + CommConstants.sqlCR);
         tempSb.append("- 단어, 예문을 검색합니다." + CommConstants.sqlCR);
         tempSb.append(" .단어를 클릭하시면 단어 상세, 예문을 클릭하시면 예문 상세를 보실 수 있습니다." + CommConstants.sqlCR);
-        tempSb.append(" .단어를 길게 클릭하시면 웹사전 검색, 단어장에 추가할 수 있고, 예문을 길게 클릭하시면 회화노트에 등록 및 TTS를 들을 수 있습니다." + CommConstants.sqlCR);
+        tempSb.append(" .단어를 길게 클릭하시면 웹사전 검색, 단어장에 추가할 수 있습니다." + CommConstants.sqlCR);
         tempSb.append(" .없는 단어일 경우 하단에 메세지가 나오고, 오른쪽 버튼을 클릭하시면 웹사전으로 검색하실 수 있습니다." + CommConstants.sqlCR);
         tempSb.append("" + CommConstants.sqlCR);
         if ( screen.equals(CommConstants.screen_dictionary) ) {
@@ -85,6 +85,7 @@ public class HelpActivity extends AppCompatActivity {
             allSb.append(tempSb.toString());
         }
 
+        /*
         tempSb.delete(0, tempSb.length());
         tempSb.append("* 영한 뉴스" + CommConstants.sqlCR);
         tempSb.append("- 11개의 영문 뉴스가 있습니다. " + CommConstants.sqlCR);
@@ -98,7 +99,7 @@ public class HelpActivity extends AppCompatActivity {
 
         tempSb.delete(0, tempSb.length());
         tempSb.append("* 뉴스 상세" + CommConstants.sqlCR);
-        tempSb.append("- 영어뉴스를 보면서 필요한 단어 검색 기능이 있습니다." + CommConstants.sqlCR);
+        tempSb.append("- 영어뉴스를 보면서 필요한 단어를 검색할 수 있는 기능이 있습니다." + CommConstants.sqlCR);
         tempSb.append(" .뉴스를 보다가 모르는 단어를 클릭을 하면 하단에 클릭한 단어의 뜻이 보입니다. " + CommConstants.sqlCR);
         tempSb.append(" .클릭단어의 뜻이 없을경우 하단 오른쪽의 검색 버튼을 클릭하면 Naver,Daum에서 단어 검색을 할 수 있습니다. " + CommConstants.sqlCR);
         tempSb.append(" .하단 단어를 길게 클릭하시면 단어 상세를 보실 수 있습니다." + CommConstants.sqlCR);
@@ -291,6 +292,8 @@ public class HelpActivity extends AppCompatActivity {
         } else {
             allSb.append(tempSb.toString());
         }
+
+        */
 
         tempSb.delete(0, tempSb.length());
         tempSb.append("* Daum 단어장" + CommConstants.sqlCR);

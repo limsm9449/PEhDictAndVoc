@@ -30,6 +30,7 @@ public class DicQuery {
         sql.append("UNION" + CommConstants.sqlCR);
         sql.append("SELECT '" + CommConstants.tag_click_word_ins + "'||':'||ENTRY_ID||':'||INS_DATE WRITE_DATA " + CommConstants.sqlCR);
         sql.append(" FROM DIC_CLICK_WORD" + CommConstants.sqlCR);
+
         sql.append("UNION" + CommConstants.sqlCR);
         sql.append("SELECT '" + CommConstants.tag_novel_ins + "'||':'||TITLE||':'||PATH||':'||INS_DATE||':'||FAVORITE_FLAG WRITE_DATA " + CommConstants.sqlCR);
         sql.append(" FROM DIC_MY_NOVEL" + CommConstants.sqlCR);

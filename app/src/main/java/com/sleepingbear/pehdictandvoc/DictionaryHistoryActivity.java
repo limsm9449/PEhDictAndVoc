@@ -1,5 +1,6 @@
 package com.sleepingbear.pehdictandvoc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -135,12 +136,11 @@ public class DictionaryHistoryActivity extends AppCompatActivity implements View
                 Cursor cur = (Cursor) adapter.getItem(position);
                 final String word = cur.getString(cur.getColumnIndexOrThrow("WORD"));
 
-                Intent intent = new Intent(getApplication(), DictionaryActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("word", word);
-                intent.putExtras(bundle);
+                Intent resultData = new Intent();
+                resultData.putExtra("word", word);
+                setResult(Activity.RESULT_OK, resultData);
 
-                startActivity(intent);
+                finish();
             }
         }
     };

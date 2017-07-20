@@ -28,7 +28,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     private SQLiteDatabase db;
     private PreferenceScreen screen;
     private ListPreference mFontSize;
-    private ListPreference mWebViewFontSize;
+    private ListPreference mWordView;
 
 
 
@@ -42,8 +42,9 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         mFontSize = (ListPreference) screen.findPreference("key_fontSize");
         mFontSize.setOnPreferenceChangeListener(this);
 
-        mWebViewFontSize = (ListPreference) screen.findPreference("key_webViewFontSize");
-        mWebViewFontSize.setOnPreferenceChangeListener(this);
+
+        mWordView = (ListPreference) screen.findPreference("key_wordView");
+        mWordView.setOnPreferenceChangeListener(this);
 
         dbHelper = new DbHelper(this);
         db = dbHelper.getWritableDatabase();
@@ -74,7 +75,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
             final EditText et_saveName = ((EditText) dialog_layout.findViewById(R.id.my_d_dm_et_save));
             et_saveName.setText("backup_" + DicUtils.getCurrentDate() + ".txt");
-            ((Button) dialog_layout.findViewById(R.id.my_d_dm_b_save)).setOnClickListener(new View.OnClickListener() {
+            dialog_layout.findViewById(R.id.my_d_dm_b_save).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String saveFileName = et_saveName.getText().toString();
@@ -116,7 +117,7 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                 }
             });
 
-            ((Button) dialog_layout.findViewById(R.id.my_d_dm_b_close)).setOnClickListener(new View.OnClickListener() {
+            dialog_layout.findViewById(R.id.my_d_dm_b_close).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     alertDialog.dismiss();
@@ -154,40 +155,6 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                         }
                     })
                     .show();
-        } else if ( preference.getKey().equals("key_my_conv_clear") ) {
-            new AlertDialog.Builder(this)
-                    .setTitle("알림")
-                    .setMessage("My 회화를 초기화 하시겠습니까?\n초기화 후에는 복구할 수 없습니다.")
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            DicDb.initMyConversationNote(db);
-                            Toast.makeText(getApplicationContext(), "My 회화가 초기화 되었습니다.", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .show();
-        } else if ( preference.getKey().equals("key_conv_clear") ) {
-            new AlertDialog.Builder(this)
-                    .setTitle("알림")
-                    .setMessage("학습 회화를 초기화 하시겠습니까?\n초기화 후에는 복구할 수 없습니다.")
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            DicDb.initConversationNote(db);
-                            Toast.makeText(getApplicationContext(), "학습 회화가 초기화 되었습니다.", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .show();
         } else if ( preference.getKey().equals("key_today_clear") ) {
             new AlertDialog.Builder(this)
                     .setTitle("알림")
@@ -205,20 +172,6 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
                         }
                     })
                     .show();
-        } else if ( preference.getKey().equals("key_mail") ) {
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
-            intent.putExtra(Intent.EXTRA_TEXT, "어플관련 문제점을 적어 주세요.\n빠른 시간 안에 수정을 하겠습니다.\n감사합니다.");
-            intent.setData(Uri.parse("mailto:limsm9449@gmail.com"));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else if ( preference.getKey().equals("key_review") ) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-        } else if ( preference.getKey().equals("key_apps") ) {
-            String url ="http://blog.naver.com/limsm9449/221031416154";
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
         }
 
         return false;
@@ -233,10 +186,10 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             ListPreference listPreference = (ListPreference) preference;
             int index = listPreference.findIndexOfValue(value);
             mFontSize.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-        } else if ( preference == mWebViewFontSize ) {
+        } else if ( preference == mWordView ) {
             ListPreference listPreference = (ListPreference) preference;
             int index = listPreference.findIndexOfValue(value);
-            mWebViewFontSize.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
+            mWordView.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
         }
         return true;
     }
@@ -244,6 +197,6 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
 
     private void updateSummary(){
         mFontSize.setSummary(mFontSize.getEntry());
-        mWebViewFontSize.setSummary(mWebViewFontSize.getEntry());
+        mWordView.setSummary(mWordView.getEntry());
     }
 }

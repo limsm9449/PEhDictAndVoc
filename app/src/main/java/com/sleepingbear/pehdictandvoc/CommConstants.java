@@ -43,6 +43,7 @@ public class CommConstants {
         public static String screen_my_novel = "SCREEN_MY_NOVEL";
 
         public static String preferences_font = "key_fontSize";
+        public static String preferences_wordView = "key_wordView";
         public static String preferences_webViewFont = "key_webViewFontSize";
 
         public static String vocabularyCode = "MY_VOC";
@@ -82,4 +83,7 @@ public class CommConstants {
         public static String novel_classicreader = "www.classicreader.com" ;
         public static String novel_loyalbooks = "www.loyalbooks.com" ;
         public static String novel_local = "로컬 영문파일" ;
+
+        public final static int a_setting = 1;
+        public final static int a_history = 2;
     }

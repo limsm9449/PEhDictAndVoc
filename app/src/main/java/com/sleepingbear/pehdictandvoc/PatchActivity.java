@@ -29,19 +29,13 @@ public class PatchActivity extends AppCompatActivity {
 
         StringBuffer patch = new StringBuffer();
 
-        patch.append("* 영어 공부에 도움이 될만한 기능을 모아서 어플을 개발하게 되었습니다." + CommConstants.sqlCR);
-        patch.append("사용하시다가 문제점이나 개선사항이 있으면 메일을 보내주세요." + CommConstants.sqlCR);
-        patch.append("개발에 참고하겠습니다." + CommConstants.sqlCR);
-        patch.append("영어 공부에 많은 도움이 되었으면 합니다." + CommConstants.sqlCR);
-        patch.append("" + CommConstants.sqlCR);
-        patch.append("" + CommConstants.sqlCR);
-        patch.append("" + CommConstants.sqlCR);
-
         patch.append("* 패치 내역" + CommConstants.sqlCR);
-        patch.append("- 영문 소설 기능 수정 : 페이지 단위로 보도록 수정, 무료 영문소설 사이트 추가" + CommConstants.sqlCR);
-        patch.append("- 영문 소설 보는 기능 추가" + CommConstants.sqlCR);
-        patch.append("- 사전에서 한글 검색시 단어체크 여부에 상관없이 한글 검색이 되도록 수정" + CommConstants.sqlCR);
-        patch.append("- 2017.06.01 : 영한 사전 어플 통합 개발" + CommConstants.sqlCR);
+        patch.append(""  + CommConstants.sqlCR);
+        patch.append("- 2017.07.20"  + CommConstants.sqlCR);
+        patch.append("영한사전에 여러 기능을 추가하다보니 어플의 특색이 없어졌습니다."  + CommConstants.sqlCR);
+        patch.append("그래서 어플 이름처럼 영한사전 기능으로 변경하였습니다."  + CommConstants.sqlCR);
+        patch.append("사전 이외의 기능을 많이 사용하셨다면 '최고의 영어학습' 어플을 이용해보세요."  + CommConstants.sqlCR);
+        patch.append("이용에 불편을 드려서 죄송합니다."  + CommConstants.sqlCR);
 
         ((TextView) this.findViewById(R.id.my_c_patch_tv1)).setText(patch.toString());
 

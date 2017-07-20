@@ -174,7 +174,7 @@ public class WordViewActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        spinner.setSelection(0);
+        spinner.setSelection( Integer.parseInt( DicUtils.getPreferencesValue( getApplicationContext(), CommConstants.preferences_wordView ) ) );
 
         return true;
     }
@@ -225,7 +225,8 @@ public class WordViewActivity extends AppCompatActivity implements View.OnClickL
                     if ( webView.canGoBack() ) {
                         webView.goBack();
                     } else {
-                        Toast.makeText(getApplicationContext(), "상단의 Back 버튼을 클릭해주세요.", Toast.LENGTH_SHORT).show();
+                        finish();
+                        //Toast.makeText(getApplicationContext(), "상단의 Back 버튼을 클릭해주세요.", Toast.LENGTH_SHORT).show();
                     }
                     return true;
             }
