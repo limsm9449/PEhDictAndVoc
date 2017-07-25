@@ -30,6 +30,7 @@ public class PatchActivity extends AppCompatActivity {
         StringBuffer patch = new StringBuffer();
 
         patch.append("* 패치 내역" + CommConstants.sqlCR);
+        patch.append("- 사전검색 History에서 선택없이 백할 경우 발생하는 오류 수정."  + CommConstants.sqlCR);
         patch.append(""  + CommConstants.sqlCR);
         patch.append("- 2017.07.20"  + CommConstants.sqlCR);
         patch.append("영한사전에 여러 기능을 추가하다보니 어플의 특색이 없어졌습니다."  + CommConstants.sqlCR);

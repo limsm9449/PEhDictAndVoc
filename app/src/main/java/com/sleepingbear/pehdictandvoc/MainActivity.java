@@ -283,8 +283,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 break;
             case CommConstants.a_history :
-                et_search.setText(data.getStringExtra("word"));
-                changeListView(true);
+                if ( data != null ) {
+                    et_search.setText(data.getStringExtra("word"));
+                    changeListView(true);
+                }
 
                 break;
         }
